@@ -1,0 +1,14 @@
+<h1 class="err">Application not found</h1>
+<!--h2>Symlink your app to <code><%= File.join(@root, @name) %></code> first.</h2-->
+
+<section>
+  <p>
+    When you access <code>http://<%= @host %>/</code>, Prax looks for a Rack
+    application at <code><%= File.join(@root, @name) %></code>.
+    To run your app at this domain:
+  </p>
+
+<pre><span>$</span> cd /path/to/<%= @name %>
+<span>$</span> prax link
+<span>$</span> firefox http://<%= @host %>/</pre>
+</section>

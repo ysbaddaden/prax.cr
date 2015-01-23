@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8"/>
+  <title><%= @title %></title>
+
+  <style type="text/css">
+   body {
+     margin: 0;
+     padding: 0;
+     font: normal normal 16px/1.4 Helvetica, sans-serif;
+     background: #e0e0d8;
+   }
+
+   h1, h2, p, li { font: inherit; }
+   ul { padding: 0; }
+   li { list-style: none; }
+   pre, code { font-family: Menlo, Monaco, monospace; }
+   p code { font-size: 14px; }
+   p, pre { color: #222; }
+   a { color: #776; }
+
+   .page {
+     max-width: 480px;
+     margin: 36px auto;
+     padding: 36px 90px;
+     background: #fff;
+     box-shadow: 0px 2px 7px #999;
+   }
+
+   h1 {
+     margin: 0 0 0 -57px;
+     line-height: 45px;
+     font-size: 36px;
+     font-weight: bold;
+   }
+   h1:before {
+     position: relative;
+     top: 10px;;
+     font-size: 66px;
+     line-height: 42px;
+   }
+   h1.ok {
+     color: #090;
+   }
+   h1.ok:before {
+     content: "✓";
+     color: #090;
+   }
+   h1.err {
+     color: #900;
+   }
+   h1.err:before {
+     content: "✗";
+     color: #900;
+   }
+
+   //h2 {
+   //  line-height: 27px;
+   //  font-size: 18px;
+   //  font-weight: normal;
+   //  margin: 0;
+   //}
+
+   pre {
+     white-space: pre-wrap;
+     font-size: 14px;
+     background: #2a2a29;
+     color: #eee;
+     padding: 1em;
+   }
+   pre span {
+     color: #aa9;
+   }
+
+   //pre.breakout {
+   //  border-top: 1px solid #ddd;
+   //  border-bottom: 1px solid #ddd;
+   //  background: #fafcf4;
+   //  margin-left: -90px;
+   //  margin-right: -90px;
+   //  padding: 8px 0 8px 90px;
+   //}
+   //pre.small_text {
+   //  font-size: 10px;
+   //}
+   //pre.small_text strong {
+   //  font-size: 13px;
+   //}
+  </style>
+</head>
+
+<body>
+  <div class="page">
+    <%= yield %>
+
+    <ul>
+      <li><a href="http://github.com/ysbaddaden/prax">GitHub Page</a></li>
+      <li><a href="https://github.com/ysbaddaden/prax/issues">Issue Tracker</a></li>
+    </ul>
+  </div>
+</body>
+</html>
