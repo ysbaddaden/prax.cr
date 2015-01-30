@@ -2,6 +2,7 @@ require "./path"
 require "./errors"
 require "./application/finders"
 require "../kill"
+require "../spawn"
 
 module Prax
   XIP_IO = /\A(.+)\.(?:\d+\.){4}xip\.io\Z/
@@ -19,16 +20,16 @@ module Prax
       @last_accessed_at = Time.now
     end
 
-    # TODO: spawn the rack application (if)
-    # TODO: spawn the shell application (if, providing a PORT env variable)
     def start
-      if stopped?
-        if path.rack?
-          raise NotImplementedError.new("spawning rack application")
-        elsif path.shell?
-          raise NotImplementedError.new("spawning shell applications")
-        end
+      return if started?
+
+      if path.rack?
+        return spawn_rack_application
       end
+
+      #if path.shell?
+      #  return spawn_shell_application
+      #end
     end
 
     def stop
@@ -49,8 +50,8 @@ module Prax
     def port
       @port ||= if path.forwarding?
                   path.port
-                elsif path.shell?
-                  find_available_port
+                #elsif path.shell?
+                #  find_available_port
                 end.to_i
     end
 
@@ -71,8 +72,27 @@ module Prax
       end
     end
 
-    private def find_available_port
-      TCPServer.new(0).addr.ip_port
+    #private def find_available_port
+    #  TCPServer.new(0).addr.ip_port
+    #end
+
+    private def spawn_rack_application
+      cmd = [] of String
+      cmd += ["bundle", "exec"] if path.gemfile?
+      cmd += ["puma", "--bind", "unix:///tmp/prax_#{name}.sock", "--dir", path.to_s]
+
+      File.open(File.join(ROOT, "_logs", "#{name}.log")) do |out|
+        @pid = Process.spawn(cmd, out: out, err: out)
+      end
     end
+
+    #private def spawn_shell_application
+    #  cmd = ["sh", path.to_s]
+    #  env = { PORT: port }
+
+    #  File.open(File.join(ROOT, "_logs", "#{name}.log")) do |out|
+    #    @pid = Process.spawn(cmd, env: env, out: out, err: out)
+    #  end
+    #end
   end
 end
