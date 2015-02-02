@@ -27,8 +27,8 @@ def Process.spawn(command, env = nil, in = nil : IO | String, out = nil : IO | B
       err.reopen(STDERR)
     end
 
-    C.execvp(argv.first, argv.buffer)
-    C.exit 127
+    LibC.execvp(argv.first, argv.buffer)
+    LibC.exit 127
   end
 
   if pid == -1
