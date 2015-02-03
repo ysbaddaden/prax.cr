@@ -13,7 +13,7 @@ module IO
     efds = Process::FdSet.new
     error_array.each { |io| efds.set(io); nfds = Math.max(nfds, io.fd) } if error_array
 
-    case C.select(nfds + 1, pointerof(rfds) as Void*, pointerof(wfds) as Void*, pointerof(efds) as Void*, timeout)
+    case LibC.select(nfds + 1, pointerof(rfds) as Void*, pointerof(wfds) as Void*, pointerof(efds) as Void*, timeout)
     when 0
       # TODO: raise timeout
     when -1
