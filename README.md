@@ -14,7 +14,7 @@ which I'm implementing along the way.
 
 ## License
 
-Prax is distributed under the MIT License.
+Prax is distributed under the [CeCILL 2.1 license](http://www.cecill.info).
 Please see LICENSE for details.
 
 ## Authors
