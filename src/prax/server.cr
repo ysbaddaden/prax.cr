@@ -1,5 +1,4 @@
 require "socket"
-require "../select"
 require "./handler"
 
 module Prax
@@ -15,11 +14,11 @@ module Prax
       servers << TCPServer.new("::", 20559)
 
       loop do
-        IO.select(servers) do |rd|
-          servers.each do |server|
-            if rd.is_set(server)
-              server.accept { |socket| Handler.new(socket) }
-            end
+        ios = IO.select(servers)
+
+        servers.each do |server|
+          if ios.includes?(server)
+            server.accept { |socket| Handler.new(socket) }
           end
         end
       end

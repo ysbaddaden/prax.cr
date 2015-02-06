@@ -18,30 +18,32 @@ module Prax
   ]
 
   class Handler
-    getter :request, :socket
+    getter :request, :client
 
     # TODO: forward the request to the application
     # TODO: forward the response back to the client
-    def initialize(@socket)
-      parser = Parser.new(socket)
+    def initialize(@client)
+      parser = Parser.new(client)
       @request = parser.parse
 
       host = request.host
 
       if LOCALHOSTS.includes?(request.host)
-        reply 200, Views.new.welcome
+        reply 200, views.welcome
         return
       end
 
       app = @app = Application.search(host)
       app.start
-      #reply app.proxy(request)
 
-      body = "The #{app.name} application is configured, but this version of Prax is nothing but a stub...\n"
-      reply 501, body
+      #puts "Connecting to: #{app.name}"
+      app.connect { |server| proxy(server) }
 
     rescue ex : ApplicationNotFound
-      reply 404, Views.new.application_not_found(ex.name, ex.host)
+      reply 404, views.application_not_found(ex.name, ex.host)
+
+    rescue ex : ErrorStartingApplication
+      reply 500, views.error_starting_application(app)
 
     rescue ex : NotImplementedError
       reply 501, "Not Implemented #{ex.message}"
@@ -49,23 +51,45 @@ module Prax
     rescue ex : Parser::InvalidRequest
       reply 400, "Bad Request: #{ex.message}"
 
+    rescue ex : Errno
+      case ex.errno
+      when Errno::ECONNREFUSED
+        reply 404, views.proxy_error(request.host, app.port, ex) if app
+      else
+        reply 500, ex.to_s
+      end
+
     rescue ex
       reply 500, ex.to_s
     end
 
-    def reply(response)
+    # TODO: stream response when Content-Length header isn't set (eg: Connection: close)
+    # TODO: stream both sides (ie. support websockets)
+    def proxy(server)
+      puts "Proxying request to: #{@app.name}"
+
+      server << request.to_s
+      server << client.read(request.content_length) if request.content_length > 0
+
+      response = Parser.new(server).parse
+      client << response.to_s
+      client << server.read(response.content_length) if response.content_length > 0
+    end
+
+    def views
+      @views ||= Views.new
     end
 
     def reply(code, body = nil)
       status = STATUSES.fetch(code)
       body = body ? body + "\n" : ""
 
-      socket << "#{request.http_version} #{code} #{status}\r\n"
-      socket << "Connection: close\r\n"
-      socket << "Content-Length: #{body.bytesize}\r\n"
-      socket << "\r\n"
-      socket << body
-      socket.flush
+      client << "#{request.http_version} #{code} #{status}\r\n"
+      client << "Connection: close\r\n"
+      client << "Content-Length: #{body.bytesize}\r\n"
+      client << "\r\n"
+      client << body
+      client.flush
     end
   end
 end

@@ -12,4 +12,7 @@ module Prax
       super ""
     end
   end
+
+  class ErrorStartingApplication < Error
+  end
 end

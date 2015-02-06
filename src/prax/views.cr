@@ -27,24 +27,24 @@ module Prax
       end
     end
 
+    def error_starting_application(app)
+      @log = File.read(app.path.log_path) if app
+
+      layout "Error starting application" do
+        render :error_starting_application
+      end
+    end
+
+    def proxy_error(@host, @port, @exception)
+      layout "Proxy Error" do
+        render :proxy_error
+      end
+    end
+
     def welcome
       layout "Welcome" do
         render :welcome
       end
     end
-
-    #class Layout
-    #  def initialize(@view)
-    #  end
-
-    #  ecr_file "#{__DIR__}/templates/layout.ecr"
-    #end
-
-    #class ApplicationNotFoundView
-    #  def initialize(@name, @host)
-    #  end
-
-    #  ecr_file "#{__DIR__}/templates/application_not_found.ecr"
-    #end
   end
 end

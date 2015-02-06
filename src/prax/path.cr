@@ -41,6 +41,10 @@ module Prax
       File.join(ROOT, "_sockets", "#{@name}.sock")
     end
 
+    def log_path
+      File.join(ROOT, "_logs", "#{@name}.log")
+    end
+
     def port
       File.read(@path).to_i
     end

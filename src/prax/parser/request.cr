@@ -35,9 +35,9 @@ module Prax
       end
 
       def to_s
-        "#{method} #{uri} #{http_version}\n" +
-        headers.map(&.to_s).join("\n") +
-        "\n\n"
+        "#{method} #{uri} #{http_version}\r\n" +
+          headers.map(&.to_s).join("\r\n") +
+          "\r\n\r\n"
       end
 
       private def find_host
