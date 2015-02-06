@@ -36,7 +36,7 @@ module Prax
 
       until names.empty?
         yield names.join('.')
-        names.pop
+        names.shift
       end
 
       yield :default
