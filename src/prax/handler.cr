@@ -73,7 +73,27 @@ module Prax
 
       response = Parser.new(server).parse
       client << response.to_s
-      client << server.read(response.content_length) if response.content_length > 0
+
+      if response.header("Transfer-Encoding") == "chunked"
+        loop do
+          break unless line = server.gets
+
+          client << line
+          count = line.strip.to_i(16)
+
+          if count == 0
+            client << server.read(2) # CRLF
+            break
+          else
+            client << server.read(count)
+            client << server.read(2) # CRLF
+          end
+        end
+      elsif response.content_length > 0
+        client << server.read(response.content_length)
+      else
+        # TODO: read until EOF / connection close?
+      end
     end
 
     def views

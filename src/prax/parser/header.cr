@@ -16,6 +16,10 @@ module Prax
         values.first
       end
 
+      def ==(other)
+        value == other
+      end
+
       def to_s
         "#{name}: #{values.join(", ")}"
       end
