@@ -1,5 +1,6 @@
 require "signal"
 require "./env"
+require "./logger"
 require "./prax/server"
 require "./prax/monitor"
 
@@ -21,6 +22,14 @@ module Prax
 
   def self.server
     @@server ||= Server.new
+  end
+
+  def self.logger
+    @@logger ||= Logger.new(STDOUT).tap do |logger|
+      logger.progname = "prax"
+      logger.level = Logger::DEBUG if ENV.has_key?("PRAX_DEBUG")
+      logger
+    end
   end
 end
 

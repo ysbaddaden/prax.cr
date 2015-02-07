@@ -4,28 +4,6 @@ require "./application/finders"
 require "../kill"
 require "../spawn"
 
-lib LibC
-  WNOHANG    = 0x00000001
-  WUNTRACED  = 0x00000002
-  WSTOPPED   = WUNTRACED
-  WEXITED    = 0x00000004
-  WCONTINUED = 0x00000008
-  WNOWAIT    = 0x01000008
-
-  P_ALL  = 0
-  P_PID  = 1
-  P_PGID = 2
-
-  fun waitid(idtype : Int32, pid : Int32, status : Int32*, options : Int32) : Int32
-end
-
-#def Process.waitpid(pid, options = 0)
-#  if LibC.waitpid(pid, out exit_code, 0) == -1
-#    raise Errno.new("Error during waitpid")
-#  end
-#  exit_code >> 8
-#end
-
 module Prax
   XIP_IO = /\A(.+)\.(?:\d+\.){4}xip\.io\Z/
 
@@ -43,26 +21,28 @@ module Prax
       @last_accessed_at = Time.now
     end
 
-    # FIXME: mutex for tread safety
+    # FIXME: protect with a mutex for tread safety
     def start
       if started?
         return
       end
 
       if path.rack?
-        puts "Starting Rack Application: #{name} port #{port}"
+        Prax.logger.info "Starting Rack Application: #{name} (port #{port})"
         return spawn_rack_application
       end
 
       if path.shell?
-        puts "Starting Shell Application: #{name} port #{port}"
+        Prax.logger.info "Starting Shell Application: #{name} (port #{port})"
         return spawn_shell_application
       end
     end
 
     def stop
       if pid = @pid
+        Prax.logger.info "Killing Application: #{name}"
         Process.kill(pid, Signal::TERM)
+        reap(pid)
         @pid = nil
       end
     end
@@ -114,9 +94,7 @@ module Prax
       cmd += ["rackup", "--host", "localhost", "--port", port.to_s]
 
       File.open(path.log_path, "w") do |log|
-        Dir.chdir(path.to_s) do
-          @pid = Process.spawn(cmd, output: log, error: log)
-        end
+        @pid = Process.spawn(cmd, output: log, error: log, chdir: path.to_s)
       end
 
       wait!
@@ -144,13 +122,13 @@ module Prax
         return if connectable?(pid)
 
         if (Time.now - timer).total_seconds > 30
-          puts "Timeout Starting Application: #{name}"
+          Prax.logger.error "Timeout Starting Application: #{name}"
           stop
           break
         end
       end
 
-      puts "Error Starting Application: #{name}"
+      Prax.logger.error "Error Starting Application: #{name}"
       reap(pid)
       raise ErrorStartingApplication.new
     end
@@ -174,11 +152,11 @@ module Prax
     end
 
     private def alive?(pid)
-      if LibC.waitpid(pid, out exit_code, LibC::WNOHANG) == -1
-        @pid = nil
-      else
-        true
-      end
+      Process.waitpid(pid, LibC::WNOHANG)
+      true
+    rescue
+      @pid = nil
+      false
     end
   end
 end

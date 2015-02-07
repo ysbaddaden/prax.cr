@@ -36,7 +36,7 @@ module Prax
       app = @app = Application.search(host)
       app.start
 
-      #puts "Connecting to: #{app.name}"
+      Prax.logger.debug "Connecting to: #{app.name}"
       app.connect { |server| proxy(server) }
 
     rescue ex : ApplicationNotFound
@@ -66,7 +66,7 @@ module Prax
     # TODO: stream response when Content-Length header isn't set (eg: Connection: close)
     # TODO: stream both sides (ie. support websockets)
     def proxy(server)
-      puts "Proxying request to: #{@app.name}"
+      Prax.logger.debug "#{request.method} #{request.uri}"
 
       server << request.to_s
       server << client.read(request.content_length) if request.content_length > 0

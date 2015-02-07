@@ -10,7 +10,7 @@ module Prax
     end
 
     def run(http_port)
-      puts "INFO: connecting to [::]:#{http_port}"
+      Prax.logger.info "connecting to [::]:#{http_port}"
       servers << TCPServer.new("::", 20559)
 
       loop do

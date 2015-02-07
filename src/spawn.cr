@@ -2,9 +2,17 @@ lib LibC
   fun execvp(file : UInt8*, argv : UInt8**) : Int32
   fun system(command : UInt8*) : Int32
   fun umask(mask : ModeT) : ModeT
+  fun setsid() : Int32
+  fun setpgid(pid : Int32, pgid : Int32) : Int32
 end
 
 module Process
+  def self.setsid
+    sid = LibC.setsid()
+    raise Errno.new("setsid") if sid < 0
+    sid
+  end
+
   # Executes a command, replacing the current process with the executed one.
   # See Process.spawn for documentation.
   def self.exec(command, env = nil, input = nil, output = nil, error = nil)
@@ -62,7 +70,7 @@ module Process
   # If pgroup is true, then the child process will run input it's own process group,
   # if it's a pgid (Int32), the child process will be moved to the specified
   # process group.
-  def self.spawn(command, env = nil, input = nil, output = nil, error = nil, pgroup = nil, umask = nil)
+  def self.spawn(command, env = nil, input = nil, output = nil, error = nil, pgroup = nil, umask = nil, chdir = nil)
     case input
     when String
       fork_input, process_input = IO.pipe
@@ -73,6 +81,7 @@ module Process
     pid = fork do
       process_input.close if process_input
       LibC.umask(umask) if umask
+      Dir.chdir(chdir) if chdir
 
       case pgroup
       when true
