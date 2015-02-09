@@ -1,0 +1,11 @@
+#!/usr/bin/env bash
+# Usage: prax start
+# Summary: Start Prax proxy server
+set -e
+
+# kills any running instance
+prax stop
+
+# starts instance
+cd "$PRAX_ROOT"
+exec "$PRAX_ROOT/bin/prax-binary" $*

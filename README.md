@@ -100,6 +100,7 @@ keepalive connections, proxying websockets, SSL server, etc.
 - [ ] keepalive connections
 - [x] proxy transfer-encoding:chuncked
 - [ ] proxy websockets
+- [ ] directly serve files in public folder
 - [ ] SSL server
 - [ ] DEB / RPM packages
 
