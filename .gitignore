@@ -1,1 +1,4 @@
-.crystal
+/bin/prax-binary
+/.crystal
+/dist
+/packages
