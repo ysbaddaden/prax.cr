@@ -6,7 +6,7 @@ module Prax
 
     def initialize(name)
       @name = name.to_s
-      @path = File.join(ROOT, @name)
+      @path = File.join(HOSTS, @name)
     end
 
     def rack?
@@ -38,11 +38,11 @@ module Prax
     end
 
     def socket_path
-      File.join(ROOT, "_sockets", "#{@name}.sock")
+      File.join(HOSTS, "_sockets", "#{@name}.sock")
     end
 
     def log_path
-      File.join(ROOT, "_logs", "#{@name}.log")
+      File.join(HOSTS, "_logs", "#{@name}.log")
     end
 
     def port

@@ -10,10 +10,10 @@ module Prax
     end
 
     def initialize
-      if ROOT.starts_with?(ENV["HOME"])
-        @root = "~" + ROOT[ENV["HOME"].length..-1]
+      if HOSTS.starts_with?(ENV["HOME"])
+        @hosts = "~" + HOSTS[ENV["HOME"].length..-1]
       else
-        @root = ROOT
+        @hosts = HOSTS
       end
     end
 
