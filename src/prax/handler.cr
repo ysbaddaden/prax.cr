@@ -23,23 +23,19 @@ module Prax
     def initialize(@client)
       parser = Parser.new(client)
       @request = parser.parse
-
       host = request.host
 
+      # welcome
       if LOCALHOSTS.includes?(request.host)
         reply 200, views.welcome
         return
       end
 
+      # app
       @app = Application.search(host)
+      app.restart if app.needs_restart?
 
-      # TODO: move to Application#initialize (?)
-      if app.started?
-        app.restart if app.needs_restart?
-      else
-        app.start
-      end
-
+      # proxy
       Prax.logger.debug "Connecting to: #{app.name}"
       app.connect { |server| proxy(server) }
 
