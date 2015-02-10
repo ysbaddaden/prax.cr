@@ -18,10 +18,8 @@ module Prax
   ]
 
   class Handler
-    getter :request, :client
+    getter :request, :client, :app
 
-    # TODO: forward the request to the application
-    # TODO: forward the response back to the client
     def initialize(@client)
       parser = Parser.new(client)
       @request = parser.parse
@@ -33,8 +31,14 @@ module Prax
         return
       end
 
-      app = @app = Application.search(host)
-      app.start
+      @app = Application.search(host)
+
+      # TODO: move to Application#initialize (?)
+      if app.started?
+        app.restart if app.needs_restart?
+      else
+        app.start
+      end
 
       Prax.logger.debug "Connecting to: #{app.name}"
       app.connect { |server| proxy(server) }
@@ -54,7 +58,7 @@ module Prax
     rescue ex : Errno
       case ex.errno
       when Errno::ECONNREFUSED
-        reply 404, views.proxy_error(request.host, app.port, ex) if app
+        reply 404, views.proxy_error(request.host, app.port, ex)
       else
         reply 500, ex.to_s
       end

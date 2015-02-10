@@ -9,7 +9,7 @@ module Prax
 
   # TODO: extract spawn part to an Application::Spawner class/module
   class Application
-    getter :name, :path, :last_accessed_at
+    getter :name, :path, :started_at, :last_accessed_at
 
     def initialize(name)
       @name = name.to_s
@@ -22,25 +22,27 @@ module Prax
     end
 
     # FIXME: protect with a mutex for tread safety
-    def start
+    def start(restart = false)
       if started?
         return
       end
 
+      action = restart ? "Restarting" : "Starting"
+
       if path.rack?
-        Prax.logger.info "Starting Rack Application: #{name} (port #{port})"
+        Prax.logger.info "#{action} Rack Application: #{name} (port #{port})"
         return spawn_rack_application
       end
 
       if path.shell?
-        Prax.logger.info "Starting Shell Application: #{name} (port #{port})"
+        Prax.logger.info "#{action} Shell Application: #{name} (port #{port})"
         return spawn_shell_application
       end
     end
 
-    def stop
+    def stop(log = true)
       if pid = @pid
-        Prax.logger.info "Killing Application: #{name}"
+        Prax.logger.info "Killing Application: #{name}" if log
         Process.kill(pid, Signal::TERM)
         reap(pid)
         @pid = nil
@@ -49,6 +51,23 @@ module Prax
 
     def started?
       !stopped?
+    end
+
+    def needs_restart?
+      if path.always_restart?
+        return true
+      end
+
+      if path.restart?
+        return @started_at.to_i < File::Stat.new(path.restart_path).mtime.to_i
+      end
+
+      false
+    end
+
+    def restart
+      stop(log: false)
+      start(restart: true)
     end
 
     def stopped?
@@ -87,7 +106,6 @@ module Prax
       server.close if server
     end
 
-    # TODO: push chdir param to Process.spawn
     private def spawn_rack_application
       cmd = [] of String
       cmd += ["bundle", "exec"] if path.gemfile?
@@ -119,7 +137,11 @@ module Prax
         sleep 0.1
 
         break unless alive?(pid)
-        return if connectable?(pid)
+
+        if connectable?(pid)
+          @started_at = Time.utc_now
+          return
+        end
 
         if (Time.now - timer).total_seconds > 30
           Prax.logger.error "Timeout Starting Application: #{name}"

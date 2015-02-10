@@ -29,6 +29,14 @@ module Prax
       File.exists?(@path)
     end
 
+    def always_restart?
+      File.exists?(always_restart_path)
+    end
+
+    def restart?
+      File.exists?(restart_path)
+    end
+
     def gemfile_path
       File.join(@path, "Gemfile")
     end
@@ -43,6 +51,14 @@ module Prax
 
     def log_path
       File.join(HOSTS, "_logs", "#{@name}.log")
+    end
+
+    def restart_path
+      File.join(@path, "tmp", "restart.txt")
+    end
+
+    def always_restart_path
+      File.join(@path, "tmp", "always_restart.txt")
     end
 
     def port

@@ -94,6 +94,7 @@ then run Prax instead of Pow!!
 Lot of work is still required: evented or thread pool of incoming requests,
 keepalive connections, proxying websockets, SSL server, etc.
 
+- [x] restart rack application (`tmp/restart.txt`, `tmp/always_restart.txt`)
 - [x] logger (to debug prax activity)
 - [ ] read .env files before spawning apps
 - [ ] handle connections in threads
