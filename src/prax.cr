@@ -1,6 +1,7 @@
 require "signal"
+require "logger"
 require "./env"
-require "./logger"
+require "./prax/errors"
 require "./prax/server"
 require "./prax/monitor"
 

@@ -1,5 +1,4 @@
-require "./path"
-require "./errors"
+require "./application/path"
 require "./application/finders"
 require "../kill"
 require "../spawn"
