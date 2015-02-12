@@ -14,11 +14,31 @@ module Prax
       servers << TCPServer.new("::", 20559)
 
       loop do
-        ios = IO.select(servers)
+        ios = nil
+
+        begin
+          ios = IO.select(servers)
+        rescue ex : Errno
+          if ex.errno == Errno::EINTR
+            Prax.logger.debug "Rescued Errno::EINTR in IO.select"
+            next
+          else
+            raise ex
+          end
+        end
+        next unless ios
 
         servers.each do |server|
           if ios.includes?(server)
-            server.accept { |socket| Handler.new(socket) }
+            socket = server.accept
+
+            Thread.new do
+              begin
+                Handler.new(socket)
+              ensure
+                socket.close
+              end
+            end
           end
         end
       end

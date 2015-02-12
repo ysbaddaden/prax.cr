@@ -97,7 +97,7 @@ keepalive connections, proxying websockets, SSL server, etc.
 - [x] restart rack application (`tmp/restart.txt`, `tmp/always_restart.txt`)
 - [x] logger (to debug prax activity)
 - [ ] read .env files before spawning apps
-- [ ] handle connections in threads
+- [x] handle connections in threads
 - [ ] keepalive connections
 - [x] proxy transfer-encoding:chuncked
 - [ ] proxy websockets
@@ -107,7 +107,7 @@ keepalive connections, proxying websockets, SSL server, etc.
 
 Some cleanup redesign:
 
-- [ ] extract Application::Spawner (from Application)
+- [x] extract Application::Spawner (from Application)
 - [ ] extract HTTPProxy (from Prax::Handler)
 
 ## License
