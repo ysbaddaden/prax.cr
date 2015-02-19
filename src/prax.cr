@@ -38,6 +38,7 @@ module Signal
   trap(INT)  { Prax.stop; exit }
   trap(TERM) { Prax.stop; exit }
   trap(QUIT) { Prax.stop; exit }
+  trap(PIPE, IGNORE)
 end
 
 Prax.start
