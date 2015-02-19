@@ -75,24 +75,28 @@ module Prax
       client << response.to_s
 
       if response.header("Transfer-Encoding") == "chunked"
-        loop do
-          break unless line = server.gets
-
-          client << line
-          count = line.strip.to_i(16)
-
-          if count == 0
-            client << server.read(2) # CRLF
-            break
-          else
-            client << server.read(count)
-            client << server.read(2) # CRLF
-          end
-        end
+        stream_chunked_response(server, client)
       elsif response.content_length > 0
         client << server.read(response.content_length)
       else
         # TODO: read until EOF / connection close?
+      end
+    end
+
+    private def stream_chunked_response(server, client)
+      loop do
+        break unless line = server.gets
+
+        client << line
+        count = line.strip.to_i(16)
+
+        if count == 0
+          client << server.read(2) # CRLF
+          break
+        else
+          client << server.read(count)
+          client << server.read(2) # CRLF
+        end
       end
     end
 
