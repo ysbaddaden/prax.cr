@@ -2,3 +2,4 @@
 /.crystal
 /dist
 /packages
+/test/hosts/_logs
