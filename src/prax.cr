@@ -7,6 +7,7 @@ require "./prax/monitor"
 
 module Prax
   HOSTS = ENV.fetch("PRAX_HOSTS", File.join(ENV["HOME"], ".prax"))
+  LOGS = ENV.fetch("PRAX_LOGS", File.join(HOSTS, "_logs"))
   HTTP_PORT = ENV.fetch("PRAX_HTTP_PORT", 20559).to_i
 
   class Error < Exception; end

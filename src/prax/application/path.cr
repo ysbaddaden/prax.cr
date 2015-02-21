@@ -56,7 +56,8 @@ module Prax
     end
 
     def log_path
-      File.join(HOSTS, "_logs", "#{@name}.log")
+      Dir.mkdir(LOGS) unless File.exists?(LOGS)
+      File.join(LOGS, "#{@name}.log")
     end
 
     def restart_path
