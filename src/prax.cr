@@ -20,6 +20,7 @@ module Prax
 
   def self.stop
     server.stop
+    applications.each(&.stop)
   end
 
   def self.server
