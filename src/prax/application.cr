@@ -1,3 +1,4 @@
+require "thread"
 require "./application/path"
 require "./application/finders"
 require "./application/spawner"
@@ -14,36 +15,39 @@ module Prax
       @name = name.to_s
       @path = Path.new(@name)
       @last_accessed_at = Time.now
+      @mutex = Mutex.new
     end
 
     def touch
       @last_accessed_at = Time.now
     end
 
-    # FIXME: protect with a mutex for tread safety
     def start(restart = false)
-      return if started?
-      action = restart ? "restarting" : "starting"
+      @mutex.synchronize do
+        return if started?
+        action = restart ? "restarting" : "starting"
 
-      if path.rack?
-        Prax.logger.info "#{action} rack application: #{name} (port #{port})"
-        spawner.spawn_rack_application
-      elsif path.shell?
-        Prax.logger.info "#{action} shell application: #{name} (port #{port})"
-        spawner.spawn_shell_application
+        if path.rack?
+          Prax.logger.info "#{action} rack application: #{name} (port #{port})"
+          spawner.spawn_rack_application
+        elsif path.shell?
+          Prax.logger.info "#{action} shell application: #{name} (port #{port})"
+          spawner.spawn_shell_application
+        end
+
+        @started_at = Time.utc_now
       end
-
-      @started_at = Time.utc_now
     end
 
-    # FIXME: protect with a mutex for tread safety
     def stop(log = true)
-      return if stopped?
+      @mutex.synchronize do
+        return if stopped?
 
-      Prax.logger.info "killing application: #{name}" if log
-      spawner.kill
+        Prax.logger.info "killing application: #{name}" if log
+        spawner.kill
 
-      @started_at = nil
+        @started_at = nil
+      end
     end
 
     def restart
