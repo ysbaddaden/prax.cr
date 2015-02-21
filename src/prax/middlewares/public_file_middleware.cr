@@ -8,7 +8,7 @@ module Prax
 
         unless handler.app.proxyable?
           if directory?(file_path)
-            file_path = File.join(handler.app.path.public_path, "index.html")
+            file_path = File.join(file_path, "index.html")
           end
         end
 
