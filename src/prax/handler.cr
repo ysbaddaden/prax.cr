@@ -23,7 +23,7 @@ module Prax
 
     def initialize(@client)
       parser = Parser.new(client)
-      @request = parser.parse
+      @request = parser.parse_request
       Prax.run_middlewares(self)
 
     rescue ex : ApplicationNotFound

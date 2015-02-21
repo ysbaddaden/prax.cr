@@ -18,7 +18,7 @@ module Prax
         server << request.to_s
         server << client.read(request.content_length) if request.content_length > 0
 
-        response = Parser.new(server).parse
+        response = Parser.new(server).parse_response
         client << response.to_s
 
         if response.header("Transfer-Encoding") == "chunked"

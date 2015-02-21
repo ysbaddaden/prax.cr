@@ -1,25 +1,21 @@
 require "uri"
-require "./header"
+require "./common"
 
 module Prax
   class Parser
     class Request
+      include Common
+
       getter :method, :uri, :http_version, :headers
 
       def initialize(@method, @uri, @http_version)
         @headers = [] of Header
       end
 
-      def add_header(name, value)
-        if header = self.header(name)
-          header << value
-        else
-          headers << Header.new(name, value)
-        end
-      end
-
-      def header(name)
-        headers.find { |header| header.name == name }
+      def to_s
+        "#{method} #{uri} #{http_version}\r\n" +
+          headers.map(&.to_s).join("\r\n") +
+          "\r\n\r\n"
       end
 
       def host
@@ -28,16 +24,6 @@ module Prax
                   else
                     raise InvalidRequest.new("missing host header")
                   end
-      end
-
-      def content_length
-        header("Content-Length").to_i
-      end
-
-      def to_s
-        "#{method} #{uri} #{http_version}\r\n" +
-          headers.map(&.to_s).join("\r\n") +
-          "\r\n\r\n"
       end
 
       private def find_host
