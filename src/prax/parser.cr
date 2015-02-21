@@ -10,6 +10,7 @@ module Prax
     def initialize(@socket)
     end
 
+    # FIXME: parses HTTP responses as HTTP requests!
     def parse
       method, uri, http_version = readline.split(/[ \t]+/)
       request = Request.new(method, uri, http_version)

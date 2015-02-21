@@ -37,6 +37,12 @@ module Prax
       File.exists?(restart_path)
     end
 
+    def public_path
+      path = File.join(@path, "public")
+      path = @path unless File.exists?(path) && rack?
+      path
+    end
+
     def gemfile_path
       File.join(@path, "Gemfile")
     end

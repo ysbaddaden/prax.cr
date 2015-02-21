@@ -1,0 +1,48 @@
+require "../mime"
+
+module Prax
+  module Middlewares
+    class PublicFileMiddleware < Base
+      # TODO: set correct content-type header
+      def call(handler)
+        file_path = path(handler)
+
+        if file?(file_path)
+          Prax.logger.debug "serving '#{file_path}'"
+          stat = File::Stat.new(file_path)
+          type = MIME_TYPES.fetch(File.extname(file_path).downcase, DEFAULT_MIME_TYPE)
+
+          headers = [] of String
+          headers << "Content-Type: #{type}"
+          headers << "Content-Length: #{stat.size}"
+
+          handler.reply(200, headers) do
+            stream_file(handler.client, file_path)
+          end
+        else
+          yield
+        end
+      end
+
+      def path(handler)
+        public_path = handler.app.path.public_path
+        uri = URI.parse(handler.request.uri)
+        File.join(public_path, uri.path)
+      end
+
+      def file?(file_path)
+        File.exists?(file_path) && File.file?(file_path)
+      end
+
+      def stream_file(client, file_path)
+        buffer :: UInt8[2048]
+
+        File.open(file_path, "rb") do |file|
+          while (read_bytes = file.read(buffer.to_slice)) > 0
+            client.write(buffer.to_slice, read_bytes)
+          end
+        end
+      end
+    end
+  end
+end

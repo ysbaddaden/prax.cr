@@ -14,7 +14,6 @@ module Prax
       @name = name.to_s
       @path = Path.new(@name)
       @last_accessed_at = Time.now
-      start
     end
 
     def touch

@@ -1,6 +1,7 @@
 require "./parser"
 require "./application"
 require "./views"
+require "./middleware"
 
 module Prax
   STATUSES = {
@@ -18,26 +19,12 @@ module Prax
   ]
 
   class Handler
-    getter :request, :client, :app
+    getter :request, :client
 
     def initialize(@client)
       parser = Parser.new(client)
       @request = parser.parse
-      host = request.host
-
-      # welcome
-      if LOCALHOSTS.includes?(request.host)
-        reply 200, views.welcome
-        return
-      end
-
-      # app
-      @app = Application.search(host)
-      app.restart if app.needs_restart?
-
-      # proxy
-      Prax.logger.debug "Connecting to: #{app.name}"
-      app.connect { |server| proxy(server) }
+      Prax.run_middlewares(self)
 
     rescue ex : ApplicationNotFound
       reply 404, views.application_not_found(ex.name, ex.host)
@@ -63,41 +50,8 @@ module Prax
       reply 500, ex.to_s
     end
 
-    # TODO: stream response when Content-Length header isn't set (eg: Connection: close)
-    # TODO: stream both sides (ie. support websockets)
-    def proxy(server)
-      Prax.logger.debug "#{request.method} #{request.uri}"
-
-      server << request.to_s
-      server << client.read(request.content_length) if request.content_length > 0
-
-      response = Parser.new(server).parse
-      client << response.to_s
-
-      if response.header("Transfer-Encoding") == "chunked"
-        stream_chunked_response(server, client)
-      elsif response.content_length > 0
-        client << server.read(response.content_length)
-      else
-        # TODO: read until EOF / connection close?
-      end
-    end
-
-    private def stream_chunked_response(server, client)
-      loop do
-        break unless line = server.gets
-
-        client << line
-        count = line.strip.to_i(16)
-
-        if count == 0
-          client << server.read(2) # CRLF
-          break
-        else
-          client << server.read(count)
-          client << server.read(2) # CRLF
-        end
-      end
+    def app
+      @app ||= Application.search(request.host)
     end
 
     def views
@@ -114,6 +68,19 @@ module Prax
       client << "\r\n"
       client << body
       client.flush
+    end
+
+    def reply(code, headers = nil)
+      status = STATUSES.fetch(code)
+
+      headers ||= [] of String
+      headers << "Connection: close"
+
+      client << "#{request.http_version} #{code} #{status}\r\n"
+      client << headers.join("\r\n").to_s
+      client << "\r\n\r\n"
+
+      yield
     end
   end
 end
