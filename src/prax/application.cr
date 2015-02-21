@@ -23,13 +23,13 @@ module Prax
     # FIXME: protect with a mutex for tread safety
     def start(restart = false)
       return if started?
-      action = restart ? "Restarting" : "Starting"
+      action = restart ? "restarting" : "starting"
 
       if path.rack?
-        Prax.logger.info "#{action} Rack Application: #{name} (port #{port})"
+        Prax.logger.info "#{action} rack application: #{name} (port #{port})"
         spawner.spawn_rack_application
       elsif path.shell?
-        Prax.logger.info "#{action} Shell Application: #{name} (port #{port})"
+        Prax.logger.info "#{action} shell application: #{name} (port #{port})"
         spawner.spawn_shell_application
       end
 
@@ -40,7 +40,7 @@ module Prax
     def stop(log = true)
       return if stopped?
 
-      Prax.logger.info "Killing Application: #{name}" if log
+      Prax.logger.info "killing application: #{name}" if log
       spawner.kill
 
       @started_at = nil

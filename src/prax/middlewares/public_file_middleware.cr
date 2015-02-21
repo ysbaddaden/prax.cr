@@ -7,6 +7,12 @@ module Prax
       def call(handler)
         file_path = path(handler)
 
+        unless handler.app.path.shell? || handler.app.path.rack?
+          if directory?(file_path)
+            file_path = File.join(handler.app.path.public_path, "index.html")
+          end
+        end
+
         if file?(file_path)
           Prax.logger.debug "serving '#{file_path}'"
           stat = File::Stat.new(file_path)
@@ -32,6 +38,10 @@ module Prax
 
       def file?(file_path)
         File.exists?(file_path) && File.file?(file_path)
+      end
+
+      def directory?(file_path)
+        File.exists?(file_path) && File.directory?(file_path)
       end
 
       def stream_file(client, file_path)

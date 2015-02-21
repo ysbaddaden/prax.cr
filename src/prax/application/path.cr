@@ -18,11 +18,11 @@ module Prax
     end
 
     def forwarding?
-      port > 0
+      File.file?(@path) && port > 0
     end
 
     def shell?
-      !forwarding?
+      File.file?(@path) && !forwarding?
     end
 
     def exists?
