@@ -101,13 +101,14 @@ keepalive connections, proxying websockets, SSL server, etc.
 - [ ] keepalive connections
 - [x] proxy transfer-encoding:chuncked
 - [ ] proxy websockets
-- [ ] directly serve files in public folder
+- [x] directly serve files in public folder
 - [ ] SSL server
 - [ ] DEB / RPM packages
 
 Some cleanup redesign:
 
 - [x] extract Application::Spawner (from Application)
+- [x] extract Middlewares (from Handler)
 - [ ] extract HTTPProxy (from Prax::Handler)
 
 ## License
