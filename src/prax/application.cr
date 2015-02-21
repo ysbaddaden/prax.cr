@@ -96,6 +96,10 @@ module Prax
       #end
     end
 
+    def proxyable?
+      port > 0
+    end
+
     private def find_available_port
       server = TCPServer.new(0)
       server.addr.ip_port

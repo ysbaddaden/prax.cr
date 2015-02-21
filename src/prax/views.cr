@@ -27,6 +27,12 @@ module Prax
       end
     end
 
+    def not_found(@path, @host)
+      layout "File not found" do
+        render :not_found
+      end
+    end
+
     def error_starting_application(app)
       @log = File.read(app.path.log_path) if app
 

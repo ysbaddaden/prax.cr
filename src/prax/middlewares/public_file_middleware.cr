@@ -3,11 +3,10 @@ require "../mime"
 module Prax
   module Middlewares
     class PublicFileMiddleware < Base
-      # TODO: set correct content-type header
       def call(handler)
         file_path = path(handler)
 
-        unless handler.app.path.shell? || handler.app.path.rack?
+        unless handler.app.proxyable?
           if directory?(file_path)
             file_path = File.join(handler.app.path.public_path, "index.html")
           end
@@ -25,8 +24,11 @@ module Prax
           handler.reply(200, headers) do
             stream_file(handler.client, file_path)
           end
-        else
+        elsif handler.app.proxyable?
           yield
+        else
+          uri = URI.parse(handler.request.uri)
+          handler.reply 404, handler.views.not_found(uri.path, handler.request.host)
         end
       end
 
