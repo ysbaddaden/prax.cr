@@ -35,6 +35,13 @@ module Prax
             Thread.new do
               begin
                 Handler.new(socket)
+              rescue ex : Errno
+                case ex.errno
+                when Errno::EPIPE
+                  Prax.logger.debug "rescued broken pipe"
+                else
+                  raise ex
+                end
               ensure
                 socket.close
               end

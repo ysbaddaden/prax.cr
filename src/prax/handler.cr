@@ -43,13 +43,8 @@ module Prax
       when Errno::ECONNREFUSED
         reply 404, views.proxy_error(request.host, app.port, ex)
       else
-        Prax.logger.fatal "received errno exception (#{ex.errno}) #{ex.message}:\n  #{ex.backtrace.join("  \n")}"
-        reply 500, ex.to_s
+        raise ex
       end
-
-    rescue ex
-      Prax.logger.fatal "received exception: #{ex.message}\n  #{ex.backtrace.join("  \n")}"
-      reply 500, ex.to_s
     end
 
     def app
