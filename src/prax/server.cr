@@ -20,7 +20,7 @@ module Prax
           ios = IO.select(servers)
         rescue ex : Errno
           if ex.errno == Errno::EINTR
-            Prax.logger.debug "Rescued Errno::EINTR in IO.select"
+            Prax.logger.debug "rescued Errno::EINTR in IO.select"
             next
           else
             raise ex

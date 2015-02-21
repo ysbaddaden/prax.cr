@@ -105,12 +105,6 @@ keepalive connections, proxying websockets, SSL server, etc.
 - [ ] SSL server
 - [ ] DEB / RPM packages
 
-Some cleanup redesign:
-
-- [x] extract Application::Spawner (from Application)
-- [x] extract Middlewares (from Handler)
-- [ ] extract HTTPProxy (from Prax::Handler)
-
 ## License
 
 Prax is distributed under the [CeCILL 2.1 license](http://www.cecill.info).

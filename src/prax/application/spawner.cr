@@ -47,13 +47,13 @@ module Prax
         return if connectable?
 
         if (Time.now - timer).total_seconds > 30
-          Prax.logger.error "Timeout Starting Application: #{app.name}"
+          Prax.logger.error "timeout starting application: #{app.name}"
           kill
           break
         end
       end
 
-      Prax.logger.error "Error Starting Application: #{app.name}"
+      Prax.logger.error "error starting application: #{app.name}"
       reap!
       raise ErrorStartingApplication.new
     end
