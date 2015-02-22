@@ -19,33 +19,15 @@ module Prax
         begin
           ios = IO.select(servers)
         rescue ex : Errno
-          if ex.errno == Errno::EINTR
-            Prax.logger.debug "rescued Errno::EINTR in IO.select"
-            next
-          else
-            raise ex
-          end
+          next if ex.errno == Errno::EINTR
+          raise ex
         end
         next unless ios
 
         servers.each do |server|
           if ios.includes?(server)
             socket = server.accept
-
-            Thread.new do
-              begin
-                Handler.new(socket)
-              rescue ex : Errno
-                case ex.errno
-                when Errno::EPIPE
-                  Prax.logger.debug "rescued broken pipe"
-                else
-                  raise ex
-                end
-              ensure
-                socket.close
-              end
-            end
+            Thread.new { handle_client(socket) }
           end
         end
       end
@@ -56,6 +38,33 @@ module Prax
 
     def stop
       servers.each(&.close)
+    end
+
+    private def handle_client(socket)
+      loop do
+        ios = IO.select([socket], nil, nil, 15)
+
+        unless ios
+          Prax.logger.debug "closing idle connection"
+          break
+        end
+
+        if ios.includes?(socket)
+          handler = Handler.new(socket)
+          break unless handler.keepalive?
+        end
+      end
+
+    rescue ex : Errno
+      case ex.errno
+      when Errno::EPIPE
+        Prax.logger.debug "rescued broken pipe"
+      else
+        raise ex
+      end
+
+    ensure
+      socket.close
     end
   end
 end

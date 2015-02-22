@@ -79,5 +79,18 @@ module Prax
 
       yield
     end
+
+    def keepalive?
+      connection = request.header("Connection")
+
+      case request.http_version
+      when "HTTP/1.0"
+        connection && (connection.value == "keepalive")
+      when "HTTP/1.1"
+        !connection || connection.not_nil!.value != "close"
+      else
+        false
+      end
+    end
   end
 end

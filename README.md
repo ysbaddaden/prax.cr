@@ -98,7 +98,7 @@ keepalive connections, proxying websockets, SSL server, etc.
 - [x] logger (to debug prax activity)
 - [ ] read .env files before spawning apps
 - [x] handle connections in threads
-- [ ] keepalive connections
+- [x] keepalive connections
 - [x] proxy transfer-encoding:chuncked
 - [ ] proxy websockets
 - [x] directly serve files in public folder
