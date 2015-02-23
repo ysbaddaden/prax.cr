@@ -24,26 +24,29 @@ module Prax
     def initialize(@client)
       parser = Parser.new(client)
       @request = parser.parse_request
-      Prax.run_middlewares(self)
 
-    rescue ex : ApplicationNotFound
-      reply 404, views.application_not_found(ex.name, ex.host)
+      begin
+        Prax.run_middlewares(self)
 
-    rescue ex : ErrorStartingApplication
-      reply 500, views.error_starting_application(app)
+      rescue ex : ApplicationNotFound
+        reply 404, views.application_not_found(ex.name, ex.host)
 
-    rescue ex : NotImplementedError
-      reply 501, "Not Implemented #{ex.message}"
+      rescue ex : ErrorStartingApplication
+        reply 500, views.error_starting_application(app)
 
-    rescue ex : Parser::InvalidRequest
-      reply 400, "Bad Request: #{ex.message}"
+      rescue ex : NotImplementedError
+        reply 501, "Not Implemented #{ex.message}"
 
-    rescue ex : Errno
-      case ex.errno
-      when Errno::ECONNREFUSED
-        reply 404, views.proxy_error(request.host, app.port, ex)
-      else
-        raise ex
+      rescue ex : Parser::InvalidRequest
+        reply 400, "Bad Request: #{ex.message}"
+
+      rescue ex : Errno
+        case ex.errno
+        when Errno::ECONNREFUSED
+          reply 404, views.proxy_error(request.host, app.port, ex)
+        else
+          raise ex
+        end
       end
     end
 
