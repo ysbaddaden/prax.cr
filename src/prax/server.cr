@@ -41,30 +41,38 @@ module Prax
     end
 
     private def handle_client(socket)
-      loop do
-        ios = IO.select([socket], nil, nil, 15)
+      Handler.new(socket)
 
-        unless ios
-          Prax.logger.debug "closing idle connection"
-          break
-        end
+      #loop do
+      #  ios = nil
 
-        if ios.includes?(socket)
-          handler = Handler.new(socket)
-          break unless handler.keepalive?
-        end
-      end
+      #  begin
+      #    ios = IO.select([socket], nil, nil, 15)
+      #  rescue ex : Errno
+      #    next if ex.errno == Errno::EINTR
+      #    raise ex
+      #  end
+
+      #  unless ios
+      #    Prax.logger.debug "closing idle connection"
+      #    break
+      #  end
+
+      #  if ios.includes?(socket)
+      #    handler = Handler.new(socket)
+      #    break unless handler.keepalive?
+      #  end
+      #end
 
     rescue ex : Errno
       case ex.errno
-      when Errno::EPIPE
-        Prax.logger.debug "rescued EPIPE"
+      when Errno::EPIPE, Errno::ECONNRESET
       else
         debug_exception(ex)
       end
 
-    rescue ex : Parser::InvalidRequest
-      Prax.logger.debug "invalid request: #{ex.message}"
+    #rescue ex : Parser::InvalidRequest
+    #  Prax.logger.debug "invalid request: #{ex.message}"
 
     rescue ex
       debug_exception(ex)

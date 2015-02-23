@@ -16,8 +16,8 @@ module Prax
       request = Request.new(method, uri, http_version)
       parse_headers(request)
       request
-    rescue ex : Errno
-      raise InvalidRequest.new(ex.message)
+    #rescue ex : Errno
+    #  raise InvalidRequest.new(ex.message)
     end
 
     def parse_response
@@ -25,8 +25,8 @@ module Prax
       response = Response.new(http_version, code, status)
       parse_headers(response)
       response
-    rescue ex : Errno
-      raise InvalidRequest.new(ex.message)
+    #rescue ex : Errno
+    #  raise InvalidRequest.new(ex.message)
     end
 
     private def parse_headers(object)
@@ -45,7 +45,7 @@ module Prax
       if line = @socket.gets
         line.strip
       else
-        raise InvalidRequest.new("EOF")
+        raise "EOF"
       end
     end
   end
