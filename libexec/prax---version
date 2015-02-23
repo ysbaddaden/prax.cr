@@ -1,0 +1,4 @@
+#!/usr/bin/env bash
+set -e
+
+exec "$PRAX_ROOT/bin/prax-binary" --version
