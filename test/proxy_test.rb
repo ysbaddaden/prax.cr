@@ -12,6 +12,10 @@ class ProxyTest < Minitest::Test
     assert_equal "app2.example", Net::HTTP.get(URI("http://w3.app2.example.dev:20557/"))
   end
 
+  def test_populates_env_from_env_file
+    assert_equal "VAL1 VAL2 VAL3 ", Net::HTTP.get(URI("http://environment.dev:20557/"))
+  end
+
   def test_proxies_to_shell_application
     skip "TODO: SHELL APPLICATION"
   end

@@ -10,9 +10,10 @@ module Prax
       cmd = [] of String
       cmd += ["bundle", "exec"] if path.gemfile?
       cmd += ["rackup", "--host", "localhost", "--port", app.port.to_s]
+      env = load_env
 
       File.open(path.log_path, "w") do |log|
-        @pid = Process.spawn(cmd, output: log, error: log, chdir: path.to_s)
+        @pid = Process.spawn(cmd, env: env, output: log, error: log, chdir: path.to_s)
       end
 
       wait!
@@ -20,7 +21,8 @@ module Prax
 
     def spawn_shell_application
       cmd = ["sh", path.to_s]
-      env = { PORT: app.port }
+      env = load_env
+      env["PORT"] = app.port.to_s
 
       File.open(path.log_path, "w") do |log|
         @pid = Process.spawn(cmd, env: env, output: log, error: log)
@@ -35,6 +37,22 @@ module Prax
       end
 
       reap!
+    end
+
+    def load_env
+      env = {} of String => String
+      return env unless @app.path.env?
+
+      lines = File.read_lines(@app.path.env_path)
+        .map { |line| line.gsub(/#.+/, "").strip }
+        .reject { |line| line.empty? }
+
+      lines.each do |line|
+        key, value = line.split("=", 2)
+        env[key] = value
+      end
+
+      env
     end
 
     private def wait!
