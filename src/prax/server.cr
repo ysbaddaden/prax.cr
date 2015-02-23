@@ -58,13 +58,23 @@ module Prax
     rescue ex : Errno
       case ex.errno
       when Errno::EPIPE
-        Prax.logger.debug "rescued broken pipe"
+        Prax.logger.debug "rescued EPIPE"
       else
-        raise ex
+        debug_exception(ex)
       end
+
+    rescue ex : Parser::InvalidRequest
+      Prax.logger.debug "invalid request: #{ex.message}"
+
+    rescue ex
+      debug_exception(ex)
 
     ensure
       socket.close
+    end
+
+    private def debug_exception(ex)
+      Prax.logger.error "#{ex.message}\n  #{ex.backtrace.join("\n  ")}"
     end
   end
 end
