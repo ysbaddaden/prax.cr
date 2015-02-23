@@ -51,43 +51,50 @@ Please note that only Linux is supported. On Mac OS X you'll may want to install
 Pow!! (for the DNS resolver and the port redirection from :80 to :20559) and
 then run Prax instead of Pow!!
 
-1. Install the NSSWitch extension, then restart your browser:
+1.
+  Install the NSSWitch extension, then restart your browser:
 
-      $ cd ext/
-      $ make
-      $ sudo make install
+    $ cd ext/
+    $ make
+    $ sudo make install
 
-2. Install the iptables rules:
+2.
+  Install the iptables rules:
 
-      $ sudo cp install/initd /etc/init.d/prax
-      $ sudo update-rc.d prax defaults
-      $ sudo /etc/init.d/prax start
+    $ sudo cp install/initd /etc/init.d/prax
+    $ sudo update-rc.d prax defaults
+    $ sudo /etc/init.d/prax start
 
-3. Either install the Crystal 0.5.9 release, or clone and build the
-   [master branch](https://github.com/manastech/crystal).
+3.
+  Either install the Crystal 0.6.0 release, or clone and build the
+  [master branch](https://github.com/manastech/crystal).
 
-4. Compile Prax:
+4.
+  Compile Prax:
 
-      $ make
+    $ make
 
   You'll may want to specify the crystal binary to use:
 
-      $ make CRYSTAL_BIN=/path/to/crystal/bin/crystal
+    $ make CRYSTAL_BIN=/path/to/crystal/bin/crystal
 
-5. Prepare Prax environment:
+5.
+  Prepare Prax environment:
 
-      $ mkdir ~/.prax
+    $ mkdir ~/.prax
 
-6. Start Prax, and test that it works:
+6.
+  Start Prax, and test that it works:
 
-      $ ./bin/prax start
-      $ firefox localhost
+    $ ./bin/prax start
+    $ firefox localhost
 
-7. Link your applications, and enjoy:
+7.
+  Link your applications, and enjoy:
 
-      $ cd path/to/myapp
-      $ ln -s $PWD ~/.prax/myapp
-      $ firefox myapp.dev
+    $ cd path/to/myapp
+    $ prax link
+    $ firefox myapp.dev
 
 ## TODO
 
