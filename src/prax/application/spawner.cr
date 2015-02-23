@@ -43,13 +43,15 @@ module Prax
       env = {} of String => String
       return env unless @app.path.env?
 
+      Prax.logger.debug "loading #{app.name}/.env file"
+
       lines = File.read_lines(@app.path.env_path)
         .map { |line| line.gsub(/#.+/, "").strip }
-        .reject { |line| line.empty? }
+        .reject { |line| line.empty? || !line.index('=') }
 
       lines.each do |line|
-        key, value = line.split("=", 2)
-        env[key] = value
+        kv = line.split('=', 2)
+        env[kv[0]] = kv.size == 2 ? kv[1]: ""
       end
 
       env

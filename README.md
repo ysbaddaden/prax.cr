@@ -96,7 +96,7 @@ keepalive connections, proxying websockets, SSL server, etc.
 
 - [x] restart rack application (`tmp/restart.txt`, `tmp/always_restart.txt`)
 - [x] logger (to debug prax activity)
-- [ ] read .env files before spawning apps
+- [x] read .env files before spawning apps
 - [x] handle connections in threads
 - [x] keepalive connections
 - [x] proxy transfer-encoding:chuncked
