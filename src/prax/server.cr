@@ -18,9 +18,7 @@ module Prax
 
         begin
           ios = IO.select(servers)
-        rescue ex : Errno
-          next if ex.errno == Errno::EINTR
-          raise ex
+        rescue Errno::EINTR
         end
         next unless ios
 
@@ -55,16 +53,11 @@ module Prax
         end
       end
 
-    rescue ex : Errno
-      case ex.errno
-      when Errno::EPIPE
+    rescue Errno::EPIPE
         Prax.logger.debug "rescued EPIPE"
-      else
-        debug_exception(ex)
-      end
 
-    rescue ex : Parser::InvalidRequest
-      Prax.logger.debug "invalid request: #{ex.message}"
+    #rescue ex : Parser::InvalidRequest
+    #  Prax.logger.debug "invalid request: #{ex.message}"
 
     rescue ex
       debug_exception(ex)

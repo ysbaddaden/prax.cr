@@ -81,12 +81,8 @@ module Prax
     private def connectable?
       sock = app.connect
       true
-    rescue ex : Errno
-      unless ex.errno == Errno::ECONNREFUSED
-        reap!
-        raise ex
-      end
-      false
+    rescue Errno::ECONNREFUSED
+      return false
     ensure
       sock.close if sock
     end
