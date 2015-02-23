@@ -11,7 +11,7 @@ module Prax
 
     def run(http_port)
       Prax.logger.info "connecting to [::]:#{http_port}"
-      servers << TCPServer.new("::", HTTP_PORT)
+      servers << TCPServer.new("::", http_port)
 
       loop do
         ios = nil

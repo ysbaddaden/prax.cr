@@ -53,41 +53,41 @@ then run Prax instead of Pow!!
 
 1. Install the NSSWitch extension, then restart your browser:
 
-    $ cd ext/
-    $ make
-    $ sudo make install
+      $ cd ext/
+      $ make
+      $ sudo make install
 
 2. Install the iptables rules:
 
-    $ sudo cp install/initd /etc/init.d/prax
-    $ sudo update-rc.d prax defaults
-    $ sudo /etc/init.d/prax start
+      $ sudo cp install/initd /etc/init.d/prax
+      $ sudo update-rc.d prax defaults
+      $ sudo /etc/init.d/prax start
 
 3. Either install the Crystal 0.5.9 release, or clone and build the
    [master branch](https://github.com/manastech/crystal).
 
 4. Compile Prax:
 
-    $ make
+      $ make
 
   You'll may want to specify the crystal binary to use:
 
-    $ make CRYSTAL_BIN=/path/to/crystal/bin/crystal
+      $ make CRYSTAL_BIN=/path/to/crystal/bin/crystal
 
 5. Prepare Prax environment:
 
-    $ mkdir ~/.prax
+      $ mkdir ~/.prax
 
 6. Start Prax, and test that it works:
 
-    $ ./bin/prax-binary
-    $ firefox localhost
+      $ ./bin/prax start
+      $ firefox localhost
 
 7. Link your applications, and enjoy:
 
-    $ cd path/to/myapp
-    $ ln -s $PWD ~/.prax/myapp
-    $ firefox myapp.dev
+      $ cd path/to/myapp
+      $ ln -s $PWD ~/.prax/myapp
+      $ firefox myapp.dev
 
 ## TODO
 
@@ -104,6 +104,7 @@ keepalive connections, proxying websockets, SSL server, etc.
 - [x] directly serve files in public folder
 - [ ] SSL server
 - [ ] DEB / RPM packages
+- [x] daemonize prax binary (with command line switch)
 
 ## License
 

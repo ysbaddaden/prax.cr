@@ -2,6 +2,7 @@ require "signal"
 require "logger"
 require "option_parser"
 require "./env"
+require "./prax/config"
 require "./prax/errors"
 require "./prax/server"
 require "./prax/monitor"
@@ -11,9 +12,9 @@ module Prax
   BUILD_DATE = {{ `date --utc +'%Y-%m-%d'`.stringify.chomp }}
   #BUILD_REVISION = {{ `git rev-parse --short HEAD` }}
 
-  HOSTS = ENV.fetch("PRAX_HOSTS", File.join(ENV["HOME"], ".prax"))
-  LOGS = ENV.fetch("PRAX_LOGS", File.join(HOSTS, "_logs"))
-  HTTP_PORT = ENV.fetch("PRAX_HTTP_PORT", 20559).to_i
+  #HOSTS = ENV.fetch("PRAX_HOSTS", File.join(ENV["HOME"], ".prax"))
+  #LOGS = ENV.fetch("PRAX_LOGS", File.join(HOSTS, "_logs"))
+  #HTTP_PORT = ENV.fetch("PRAX_HTTP_PORT", 20559).to_i
 
   class Error < Exception; end
   class BadRequest < Error; end
@@ -24,7 +25,7 @@ module Prax
 
   def self.start
     Monitor.start
-    server.run(HTTP_PORT)
+    server.run(http_port)
   end
 
   def self.stop
@@ -39,7 +40,7 @@ module Prax
   def self.logger
     @@logger ||= Logger.new(STDOUT).tap do |logger|
       logger.progname = "prax"
-      logger.level = Logger::DEBUG if ENV.has_key?("PRAX_DEBUG")
+      logger.level = logger_level
       logger
     end
   end
@@ -55,12 +56,28 @@ end
 OptionParser.parse! do |opts|
   opts.banner = "prax"
 
+  opts.on("-d", "--daemon", "Daemonize the server into the background") do
+    Prax.daemonize = true
+  end
+
+  opts.on("-p PORT", "--port PORT", "TCP port to bind to") do |port|
+    Prax.http_port = port.to_i
+  end
+
+  opts.on("-h PATH", "--hosts PATH", "Path where hosts are linked to") do |path|
+    Prax.hosts_path = path
+  end
+
+  opts.on("-l PATH", "--logs PATH", "Path where to write application logs to") do |path|
+    Prax.logs_path = path
+  end
+
   opts.on("-V", "--verbose", "Print debug statements to output") do
-    Prax.logger.level = Logger::DEBUG
+    Prax.logger_level = Logger::DEBUG
   end
 
   opts.on("-q", "--quiet", "Quiet down output") do
-    Prax.logger.level = Logger::WARN
+    Prax.logger_level = Logger::WARN
   end
 
   opts.on("-v", "--version", "Show the version number") do
@@ -72,6 +89,17 @@ OptionParser.parse! do |opts|
     puts opts
     exit
   end
+end
+
+if Prax.daemonize
+  exit if fork
+  LibC.setsid
+  exit if fork
+  Dir.chdir "/"
+  File.open("/dev/null").reopen(STDIN)
+  File.open("/dev/null").reopen(STDOUT)
+  File.open("/dev/null").reopen(STDERR)
+  Prax.start
 end
 
 Prax.start

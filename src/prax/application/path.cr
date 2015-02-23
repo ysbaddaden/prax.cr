@@ -6,7 +6,7 @@ module Prax
 
     def initialize(name)
       @name = name.to_s
-      @path = File.join(HOSTS, @name)
+      @path = File.join(Prax.hosts_path, @name)
     end
 
     def rack?
@@ -55,13 +55,9 @@ module Prax
       File.join(@path, "config.ru")
     end
 
-    def socket_path
-      File.join(HOSTS, "_sockets", "#{@name}.sock")
-    end
-
     def log_path
-      Dir.mkdir(LOGS) unless File.exists?(LOGS)
-      File.join(LOGS, "#{@name}.log")
+      Dir.mkdir(Prax.logs_path) unless File.exists?(Prax.logs_path)
+      File.join(Prax.logs_path, "#{@name}.log")
     end
 
     def restart_path
