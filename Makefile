@@ -15,52 +15,57 @@ DOCDIR = $(PREFIX)/opt/prax/doc
 #GNOME_AUTOSTART = $(PREFIX)/usr/share/gnome/autostart
 VERSION = `cat ../VERSION`
 
-DEBIAN_DEPENDENCIES = "-d 'libpcre3' -d 'libgc1c2' -d 'libunwind8'"
-#FEDORA_DEPENDENCIES = ""
+DEB_DEPENDENCIES = "-d 'libpcre3' -d 'libgc1c2' -d 'libunwind8 | libunwind7'"
 
 SOURCES = $(wildcard src/*.cr) $(wildcard src/**/*.cr)
+
+.PHONY: ext
 
 all: $(SOURCES)
 	mkdir -p bin
 	$(CRYSTAL_BIN) build $(CURDIR)/src/prax.cr -o bin/prax-binary
 
 release: $(SOURCES)
-	mkdir -p $(PREFIX)/opt/prax/bin
+	mkdir -p $(BINDIR)
 	$(CRYSTAL_BIN) build --release $(CURDIR)/src/prax.cr -o $(BINDIR)/prax-binary
+	#strip --strip-uneeded $(BINDIR)/prax-binary
 
 run: all
 	./bin/prax-binary
 
-install: release
-	mkdir -p $(LIBDIR) $(INITD) $(PRAXDIR) $(USRBINDIR) $(BINDIR) $(DOCDIR) #$(GNOME_AUTOSTART)
+ext:
+	cd ext && make
+
+install: ext release
+	mkdir -p $(LIBDIR) $(PRAXDIR) $(USRBINDIR) $(BINDIR) $(DOCDIR) #$(GNOME_AUTOSTART)
 	cp bin/prax $(BINDIR)
 	cp -r libexec $(PRAXDIR)
-	cp install/initd $(INITD)/prax
 	cp ext/libnss_prax.so.2 $(LIBDIR)
 	cd $(USRBINDIR) && ln -sf ../../opt/prax/bin/prax
 	cp README.md LICENSE install/prax.desktop $(DOCDIR)
 	#cp install/prax.desktop $(GNOME_AUTOSTART)
-	chmod -R 0755 $(PRAXDIR)/bin $(PRAXDIR)/libexec $(LIBDIR)/libnss_prax.so.2 $(INITD)/prax
+	chmod -R 0755 $(PRAXDIR)/bin $(PRAXDIR)/libexec $(LIBDIR)/libnss_prax.so.2
 
 package: install
-	cd dist && fpm -s dir -t $(TARGET) -n "prax" -v $(VERSION) $(DEPENDENCIES) \
+	cd dist && fpm -s dir -t $(TARGET) -n "prax" -v "$(VERSION)" $(DEPENDENCIES) \
 		--maintainer "julien@portalier.com" \
 		--url "https://github.com/ysbaddaden/prax.cr" \
-		--description "Rack Proxy Server" \
+		--description "Rack proxy server for development" \
 		--vendor "" \
 		--license "CeCILL 2.1 License" \
 		--category devel \
-		--after-install "../install/postinst" \
-		--before-remove "../install/prerm" \
+		--after-install "$(INSTALL)/postinst" \
+		--before-remove "$(INSTALL)/prerm" \
 		etc lib opt usr
 
 deb:
-	TARGET=deb DEPENDENCIES=$(DEBIAN_DEPENDENCIES) make package
+	mkdir -p $(INITD)
+	cp $(CURDIR)/install/debian/initd $(INITD)/prax
+	chmod -R 0755 $(INITD)/prax
+	TARGET=deb DEPENDENCIES=$(DEB_DEPENDENCIES) INSTALL="../install/debian" make package
 	mkdir -p packages
-	mv dist/*.deb packages/
-
-#rpm:
-#	TARGET=rpm make package
+	mv dist/*.deb packages
 
 clean:
-	rm -rf dist
+	rm -rf .crystal bin/prax-binary dist test/hosts/_logs
+	cd ext && make clean
