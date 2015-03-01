@@ -47,7 +47,10 @@ install: ext release
 	chmod -R 0755 $(PRAXDIR)/bin $(PRAXDIR)/libexec $(LIBDIR)/libnss_prax.so.2
 
 package: install
-	cd dist && fpm -s dir -t $(TARGET) -n "prax" -v "$(VERSION)" $(DEPENDENCIES) \
+	cd dist && fpm -s dir -t $(TARGET) \
+		--name "prax" \
+		--version "$(VERSION)" \
+		$(DEPENDENCIES) \
 		--maintainer "julien@portalier.com" \
 		--url "https://github.com/ysbaddaden/prax.cr" \
 		--description "Rack proxy server for development" \
