@@ -53,24 +53,6 @@ setup. You'll may want to follow the
 until deb and rpm packages are built and tested.
 
 
-## TODO
-
-Lot of work is still required: evented or thread pool of incoming requests,
-keepalive connections, proxying websockets, SSL server, etc.
-
-- [x] restart rack application (`tmp/restart.txt`, `tmp/always_restart.txt`)
-- [x] logger (to debug prax activity)
-- [x] read .env files before spawning apps
-- [x] handle connections in threads
-- [x] keepalive connections
-- [x] proxy transfer-encoding:chuncked
-- [ ] proxy websockets
-- [x] directly serve files in public folder
-- [ ] SSL server
-- [ ] DEB / RPM packages
-- [x] daemonize prax binary (with command line switch)
-
-
 ## License
 
 Prax is distributed under the [CeCILL 2.1 license](http://www.cecill.info).
