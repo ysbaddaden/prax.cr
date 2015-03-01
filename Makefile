@@ -56,6 +56,7 @@ package: install
 		--category devel \
 		--after-install "$(INSTALL)/postinst" \
 		--before-remove "$(INSTALL)/prerm" \
+		--after-remove "$(INSTALL)/postrm" \
 		etc lib opt usr
 
 deb:

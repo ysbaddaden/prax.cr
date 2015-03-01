@@ -1,2 +1,10 @@
 #! /bin/sh
-/etc/init.d/prax start
+
+case "$1" in
+    configure)
+        update-rc.d prax defaults
+        /etc/init.d/prax start
+        ;;
+    purge)
+        ;;
+esac

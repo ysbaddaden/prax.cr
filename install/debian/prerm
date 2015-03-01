@@ -1,3 +1,8 @@
 #! /bin/sh
-/usr/bin/prax stop
-/etc/init.d/prax stop
+
+case "$1" in
+    remove)
+        /etc/init.d/prax stop
+        /usr/bin/prax stop
+        ;;
+esac

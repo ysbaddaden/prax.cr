@@ -1,27 +1,10 @@
 #!/usr/bin/env bash
 set -e
 
-resolve_link() {
-  $(type -p greadlink readlink | head -1) "$1"
-}
-
-abs_dirname() {
-  local cwd="$(pwd)"
-  local path="$1"
-
-  while [ -n "$path" ]; do
-    cd "${path%/*}"
-    local name="${path##*/}"
-    path="$(resolve_link "$name" || true)"
-  done
-
-  pwd
-  cd "$cwd"
-}
-
 # Default settings
-libexec_path="$(abs_dirname "$0")"
-export PRAX_ROOT="$(abs_dirname "$libexec_path")"
+real_path="$(readlink -f "$0")"
+export PRAX_ROOT="$(dirname "$(dirname "$real_path")")"
+libexec_path="$PRAX_ROOT/libexec"
 export PRAX_HOSTS="$HOME/.prax"
 export PATH="${libexec_path}:$PATH"
 
