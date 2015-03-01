@@ -12,10 +12,6 @@ module Prax
   BUILD_DATE = {{ `date --utc +'%Y-%m-%d'`.stringify.chomp }}
   #BUILD_REVISION = {{ `git rev-parse --short HEAD` }}
 
-  #HOSTS = ENV.fetch("PRAX_HOSTS", File.join(ENV["HOME"], ".prax"))
-  #LOGS = ENV.fetch("PRAX_LOGS", File.join(HOSTS, "_logs"))
-  #HTTP_PORT = ENV.fetch("PRAX_HTTP_PORT", 20559).to_i
-
   class Error < Exception; end
   class BadRequest < Error; end
 
