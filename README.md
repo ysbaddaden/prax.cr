@@ -2,14 +2,17 @@
 
 Rack proxy server for development
 
-This is an attempt to rewrite [Prax](https://github.com/ysbaddaden/prax) in
-[Crystal](http://crystal-lang.org), a Ruby-inspired language that compiles
-down to C. This should avoid problems with version managers, since Prax would
-now be a binary application, yet remain as easily hackable as a Ruby
-application, along with better performances (yay!).
+This is an (almost) complete rewrite of [Prax](https://github.com/ysbaddaden/prax)
+in [Crystal](http://crystal-lang.org), a Ruby-inspired language that compiles
+down to LLVM. This version should avoid problems with version managers, since Prax
+is now a binary application that don't rely on Ruby anymore (except for Rack and
+`rackup`).
 
-This is in "working" state! Which means that it successfully proxies requests
-to the Puma and Webrick Rack servers (others are untested).
+Please refer to the wiki for more information:
+
+- [Manual Install Guide](https://github.com/ysbaddaden/prax.cr/wiki/Manual-Install-Guide)
+- [User Guide](https://github.com/ysbaddaden/prax.cr/wiki/User-Guide)
+
 
 ## How it works
 
@@ -44,57 +47,11 @@ traffic, so you may use xip.io to test on external devices, as mentioned above.
 
 ## Install
 
-Prax isn't ready for end-user consumption just yet, but if you want to
-contribute, or feel adventurous, please follow the steps below.
+Prax is getting ready for end-user consumption, but is still missing an easy
+setup. You'll may want to follow the
+[Manual Install Guide](https://github.com/ysbaddaden/prax.cr/wiki/Manual-Install-Guide)
+until deb and rpm packages are built and tested.
 
-Please note that only Linux is supported. On Mac OS X you'll may want to install
-Pow!! (for the DNS resolver and the port redirection from :80 to :20559) and
-then run Prax instead of Pow!!
-
-1.
-  Install the NSSWitch extension, then restart your browser:
-
-    $ cd ext/
-    $ make
-    $ sudo make install
-
-2.
-  Install the iptables rules:
-
-    $ sudo cp install/initd /etc/init.d/prax
-    $ sudo update-rc.d prax defaults
-    $ sudo /etc/init.d/prax start
-
-3.
-  Either install the Crystal 0.6.0 release, or clone and build the
-  [master branch](https://github.com/manastech/crystal).
-
-4.
-  Compile Prax:
-
-    $ make
-
-  You'll may want to specify the crystal binary to use:
-
-    $ make CRYSTAL_BIN=/path/to/crystal/bin/crystal
-
-5.
-  Prepare Prax environment:
-
-    $ mkdir ~/.prax
-
-6.
-  Start Prax, and test that it works:
-
-    $ ./bin/prax start
-    $ firefox localhost
-
-7.
-  Link your applications, and enjoy:
-
-    $ cd path/to/myapp
-    $ prax link
-    $ firefox myapp.dev
 
 ## TODO
 
@@ -113,6 +70,7 @@ keepalive connections, proxying websockets, SSL server, etc.
 - [ ] DEB / RPM packages
 - [x] daemonize prax binary (with command line switch)
 
+
 ## License
 
 Prax is distributed under the [CeCILL 2.1 license](http://www.cecill.info).
@@ -124,6 +82,11 @@ Stephenson and Basecamp, and are under the [MIT license](http://www.opensource.o
 The NSSwitch extension originaly come from [Hoof](https://github.com/pyromaniac/hoof),
 by pyromaniac, and is under the [MIT license](http://www.opensource.org/licenses/MIT).
 
-## Authors
+
+## Credits
 
 - Julien Portalier <julien@portalier.com>
+
+Prax wouldn't exist without [Pow!!](http://pow.cx) by Sam Stephenson and
+Basecamp. Prax is nothing more but a reimplementation (in another language)
+with Linux compatibility in mind.
