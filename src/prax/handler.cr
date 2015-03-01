@@ -42,7 +42,7 @@ module Prax
 
       rescue ex : Errno
         case ex.errno
-        when Errno::ECONNREFUSED
+        when Errno::ECONNREFUSED, Errno::EPIPE, Errno::ECONNRESET
           reply 404, views.proxy_error(request.host, app.port, ex)
         else
           raise ex
