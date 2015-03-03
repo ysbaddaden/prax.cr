@@ -21,7 +21,7 @@ module Prax
 
   def self.start
     Monitor.start
-    server.run(http_port)
+    server.run(http_port, https_port)
   end
 
   def self.stop

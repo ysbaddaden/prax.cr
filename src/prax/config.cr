@@ -40,4 +40,12 @@ module Prax
   def self.http_port=(port)
     @@http_port = port
   end
+
+  def self.https_port
+    @@https_port ||= ENV.fetch("PRAX_HTTPS_PORT", 20558).to_i
+  end
+
+  def self.https_port=(port)
+    @@https_port = port
+  end
 end
