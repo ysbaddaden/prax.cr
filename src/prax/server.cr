@@ -2,6 +2,8 @@ require "socket"
 require "openssl"
 require "./handler"
 
+# FIXME: hotfix to get Prax to compile, compiler insists on count being i64
+#        whereas in practice it's actually an i32.
 class OpenSSL::SSL::Socket
   def write(slice : Slice(UInt8), count)
     LibSSL.ssl_write(@ssl, slice.pointer(count), count.to_i32)
@@ -20,8 +22,10 @@ module Prax
       Prax.logger.info "binding to [::]:#{http_port}"
       servers << TCPServer.new("::", http_port)
 
-      Prax.logger.info "binding to [::]:#{https_port}"
-      servers << TCPServer.new("::", https_port)
+      if ssl_configured?
+        Prax.logger.info "binding to [::]:#{https_port}"
+        servers << TCPServer.new("::", https_port)
+      end
 
       loop do
         ios = nil
@@ -48,13 +52,6 @@ module Prax
 
     def stop
       servers.each(&.close)
-    end
-
-    private def ssl_context
-      @ssl_context ||= OpenSSL::SSL::Context.new.tap do |ctx|
-        ctx.certificate_chain = File.join(ENV["PRAX_ROOT"], "ssl", "server.crt")
-        ctx.private_key = File.join(ENV["PRAX_ROOT"], "ssl", "server.key")
-      end
     end
 
     private def handle_client(socket, ssl = false)
@@ -100,12 +97,27 @@ module Prax
       debug_exception(ex)
 
     ensure
-      socket.close
       ssl_socket.try(&.close) if ssl
+      socket.close
     end
 
     private def debug_exception(ex)
       Prax.logger.error "#{ex.message}\n  #{ex.backtrace.join("\n  ")}"
+    end
+
+    private def ssl_configured?
+      File.exists?(ssl_path(:key)) && File.exists?(ssl_path(:crt))
+    end
+
+    private def ssl_context
+      @ssl_context ||= OpenSSL::SSL::Context.new.tap do |ctx|
+        ctx.certificate_chain = ssl_path(:crt)
+        ctx.private_key = ssl_path(:key)
+      end
+    end
+
+    private def ssl_path(extname)
+      File.join(ENV["PRAX_ROOT"], "ssl", "server.#{extname}")
     end
   end
 end
