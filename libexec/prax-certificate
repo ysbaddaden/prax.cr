@@ -1,0 +1,28 @@
+#!/usr/bin/env bash
+# Usage: prax certificate [action]
+# Summary: Self-sign SSL certificates
+# Help: This command will generate or clear an SSL certificate
+#
+# By default the action is to generate the SSL certificates. Once generated you
+# may restart Prax and it will run a HTTPS server along the HTTP server. This
+# may prove useful in some cases —like interacting with Facebook.
+#
+# Certificates are valid for one year, so you'll may have to regenerate them
+# with "prax certificate".
+#
+# If you dont want the SSL server anymore, run "prax certificate clear" then
+# restart Prax. The HTTPS server will no longer be started.
+set -e
+
+ssl_path="$PRAX_ROOT/ssl"
+
+case "$1" in
+"" | "generate")
+    openssl genrsa -out "$ssl_path/server.key" 2048
+    openssl req -new -key "$ssl_path/server.key" -out "$ssl_path/server.csr" -subj "/C=/ST=/L=/O=Prax Dev Cert/OU=/CN=localhost"
+    openssl x509 -req -days 365 -in "$ssl_path/server.csr" -signkey "$ssl_path/server.key" -out "$ssl_path/server.crt"
+  ;;
+"clear")
+    rm -f "$ssl_path/server.csr" "$ssl_path/server.crt" "$ssl_path/server.key"
+  ;;
+esac
