@@ -1,5 +1,6 @@
 require "socket"
 require "./handler"
+require "../queue"
 
 module Prax
   class Server
@@ -7,6 +8,13 @@ module Prax
 
     def initialize
       @servers = [] of TCPServer
+      @queue = Queue(TCPSocket).new
+
+      @workers = (1..16).map do
+        Thread.new do
+          loop { handle_client(@queue.pop) }
+        end
+      end
     end
 
     def run(http_port)
@@ -26,8 +34,7 @@ module Prax
 
         servers.each do |server|
           if ios.includes?(server)
-            socket = server.accept
-            Thread.new { handle_client(socket) }
+            @queue.push(server.accept)
           end
         end
       end
