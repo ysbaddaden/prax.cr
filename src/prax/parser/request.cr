@@ -9,13 +9,7 @@ module Prax
       getter :method, :uri, :http_version, :headers
 
       def initialize(@method, @uri, @http_version)
-        @headers = [] of Header
-      end
-
-      def to_s
-        "#{method} #{uri} #{http_version}\r\n" +
-          headers.map(&.to_s).join("\r\n") +
-          "\r\n\r\n"
+        @headers = Headers.new
       end
 
       def host

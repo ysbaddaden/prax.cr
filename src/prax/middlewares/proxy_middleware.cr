@@ -15,7 +15,9 @@ module Prax
       def proxy(request, client, server)
         Prax.logger.debug "#{request.method} #{request.uri}"
 
-        server << request.to_s
+        server << "#{request.method} #{request.uri} #{request.http_version}\r\n"
+        server << proxy_headers(request, client).map(&.to_s).join("\r\n")
+        server << "\r\n\r\n"
         server << client.read(request.content_length) if request.content_length > 0
 
         response = Parser.new(server).parse_response
@@ -28,6 +30,16 @@ module Prax
         else
           # TODO: read until EOF / connection close?
         end
+      end
+
+      # FIXME: should dup the headers to avoid altering the request
+      def proxy_headers(request, client)
+        request.headers.replace("Connection", "close")
+        request.headers.prepend("X-Forwarded-For", client.peeraddr.ip_address)
+        request.headers.replace("X-Forwarded-Host", request.host)
+        request.headers.replace("X-Forwarded-Proto", "http") # TODO: https
+        request.headers.prepend("X-Forwarded-Server", client.addr.ip_address)
+        request.headers
       end
 
       def stream_chunked_response(server, client)
