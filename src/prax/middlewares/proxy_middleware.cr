@@ -7,15 +7,18 @@ module Prax
         app.restart if app.needs_restart?
 
         Prax.logger.debug "connecting to: #{app.name}"
-        app.connect { |server| proxy(handler.request, handler.client, server) }
+        app.connect { |server| proxy(handler, server) }
       end
 
       # TODO: stream response when Content-Length header isn't set (eg: Connection: close)
       # TODO: stream both sides (ie. support websockets)
-      def proxy(request, client, server)
+      def proxy(handler, server)
+        request, client = handler.request, handler.client
         Prax.logger.debug "#{request.method} #{request.uri}"
 
-        server << request.to_s
+        server << "#{request.method} #{request.uri} #{request.http_version}\r\n"
+        server << proxy_headers(request, handler.tcp_socket).map(&.to_s).join("\r\n")
+        server << "\r\n\r\n"
         server << client.read(request.content_length) if request.content_length > 0
 
         response = Parser.new(server).parse_response
@@ -28,6 +31,16 @@ module Prax
         else
           # TODO: read until EOF / connection close?
         end
+      end
+
+      # FIXME: should dup the headers to avoid altering the request
+      def proxy_headers(request, socket)
+        request.headers.replace("Connection", "close")
+        request.headers.prepend("X-Forwarded-For", socket.peeraddr.ip_address)
+        request.headers.replace("X-Forwarded-Host", request.host)
+        request.headers.replace("X-Forwarded-Proto", "http") # TODO: https
+        request.headers.prepend("X-Forwarded-Server", socket.addr.ip_address)
+        request.headers
       end
 
       def stream_chunked_response(server, client)

@@ -1,4 +1,5 @@
 require_relative "test_helper"
+require "json"
 
 class ProxyTest < Minitest::Test
   def test_proxies_to_rack_applications
@@ -35,5 +36,30 @@ class ProxyTest < Minitest::Test
 
   def test_supports_bundler_with_special_gems
     assert_equal "1.0", Net::HTTP.get(URI("http://bundler.dev:20557/"))
+  end
+
+  def test_alters_request_headers_and_sets_proxy_headers
+    response = Net::HTTP.get(URI("http://headers.dev:20557/"))
+    headers = JSON.parse(response)
+
+    assert_equal "headers.dev:20557", headers["HTTP_HOST"]
+    assert_equal "close", headers["HTTP_CONNECTION"]
+
+    assert_equal "headers.dev", headers["HTTP_X_FORWARDED_HOST"]
+    assert_equal "http", headers["HTTP_X_FORWARDED_PROTO"]
+    assert_equal "::1", headers["HTTP_X_FORWARDED_FOR"]
+    assert_equal "::1", headers["HTTP_X_FORWARDED_SERVER"]
+  end
+
+  def test_augments_proxy_headers
+    Net::HTTP.start("headers.dev", 20557) do |http|
+      response = http.get("/", {
+        "X-Forwarded-For" => "192.168.1.53",
+        "X-Forwarded-Server" => "10.0.3.1",
+      })
+      headers = JSON.parse(response.body)
+      assert_equal "::1, 192.168.1.53", headers["HTTP_X_FORWARDED_FOR"]
+      assert_equal "::1, 10.0.3.1", headers["HTTP_X_FORWARDED_SERVER"]
+    end
   end
 end

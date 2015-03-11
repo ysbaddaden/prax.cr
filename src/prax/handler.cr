@@ -19,9 +19,9 @@ module Prax
   ]
 
   class Handler
-    getter :request, :client
+    getter :request, :client, :tcp_socket
 
-    def initialize(@client)
+    def initialize(@client, @tcp_socket = client)
       parser = Parser.new(client)
       @request = parser.parse_request
 

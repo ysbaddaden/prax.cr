@@ -1,6 +1,7 @@
 require "socket"
 require "openssl"
 require "./handler"
+require "../queue"
 
 # FIXME: hotfix to get Prax to compile, compiler insists on count being i64
 #        whereas in practice it's actually an i32.
@@ -14,8 +15,20 @@ module Prax
   class Server
     getter :servers
 
+    struct Connection
+      property :socket, :ssl
+      def initialize(@socket, @ssl); end
+    end
+
     def initialize
       @servers = [] of TCPServer
+      @queue = Queue(Connection).new
+
+      @workers = (1..16).map do
+        Thread.new do
+          loop { handle_client(@queue.pop) }
+        end
+      end
     end
 
     def run(http_port, https_port)
@@ -40,8 +53,7 @@ module Prax
 
         servers.each_with_index do |server, index|
           if ios.includes?(server)
-            socket = server.accept
-            Thread.new { handle_client(socket, index == 1) }
+            @queue.push(Connection.new(server.accept, index == 1))
           end
         end
       end
@@ -54,12 +66,12 @@ module Prax
       servers.each(&.close)
     end
 
-    private def handle_client(socket, ssl = false)
-      if ssl
-        ssl_socket = OpenSSL::SSL::Socket.new(socket, :server, ssl_context)
-        Handler.new(ssl_socket)
+    private def handle_client(connection)
+      if connection.ssl
+        ssl_socket = OpenSSL::SSL::Socket.new(connection.socket, :server, ssl_context)
+        Handler.new(ssl_socket, connection.socket)
       else
-        Handler.new(socket)
+        Handler.new(connection.socket)
       end
 
       #loop do
@@ -97,8 +109,8 @@ module Prax
       debug_exception(ex)
 
     ensure
-      ssl_socket.try(&.close) if ssl
-      socket.close
+      ssl_socket.try(&.close) if ssl_socket
+      connection.socket.close
     end
 
     private def debug_exception(ex)
