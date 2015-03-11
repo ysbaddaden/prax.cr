@@ -3,7 +3,7 @@
 case "$1" in
     remove)
         update-rc.d prax remove
-        sed -i 's/ prax//' /etc/nsswitch.conf
+        #sed -i 's/ prax//' /etc/nsswitch.conf
         ;;
     purge)
         ;;
