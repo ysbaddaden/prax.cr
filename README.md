@@ -16,7 +16,7 @@ Please refer to the wiki for more information:
 
 ## How it works
 
-1. resolves `*.dev` domains to 127.0.0.1 (localhost)
+1. resolves `*.dev` domains to 127.0.0.1 / ::1 (localhost)
 2. redirects the :80 and :443 ports to :20559 and :20558
 3. receives incoming HTTP requests and extracts the hostname (eg: myapp.dev)
 4. spawns a Rack applications (found at `~/.prax/myapp`) if any
@@ -24,14 +24,12 @@ Please refer to the wiki for more information:
 
 ### `.dev` TLD
 
-The `.dev` domain resolver is a NSSwitch extension. You'll may prefer to
-configure dnsmasq or another local DNS server to resolve `.dev` domains to
-127.0.0.1 or ::1 instead.
+Prax proposes 2 solutions to resolve `.dev` domains:
 
-This step is crucial: your DNS servers must either always resolve `.dev` domains
-to 127.0.0.1 or never resolve them —so the NSSwitch extension will do it. Please
-troubleshoot with `getent hosts myapp.dev` (it must return 127.0.0.1) and `host
-myapp.dev` (should fail).
+- an NSSwitch extension, only compatible wih glibc and no longer compatible with
+  Google Chrome/Chromium;
+- a dnsmasq configuration, either throught NetworkManager or by installing
+  dnsmasq manually (eg. through your Linux distribution package).
 
 Prax also supports http://xip.io domains, so you may use
 `myapp.129.168.0.1.xip.io` for example. This is very useful when using an
