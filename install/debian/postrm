@@ -1,9 +1,11 @@
 #! /bin/sh
 
 case "$1" in
+    upgrade)
+        sed -i 's/ prax//' /etc/nsswitch.conf
+        ;;
     remove)
         update-rc.d prax remove
-        #sed -i 's/ prax//' /etc/nsswitch.conf
         ;;
     purge)
         ;;
