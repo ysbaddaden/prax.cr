@@ -45,6 +45,9 @@ install: ext release
 	cp README.md LICENSE install/prax.desktop $(DOCDIR)
 	#cp install/prax.desktop $(GNOME_AUTOSTART)
 	chmod -R 0755 $(PRAXDIR)/bin $(PRAXDIR)/libexec $(LIBDIR)/libnss_prax.so.2
+	mkdir -p $(PREFIX)/etc/NetworkManager/dnsmasq.d $(PREFIX)/etc/dnsmasq.d
+	cp install/dnsmasq $(PREFIX)/etc/NetworkManager/dnsmasq.d/prax
+	cp install/dnsmasq $(PREFIX)/etc/dnsmasq.d/prax
 
 package: install
 	cd dist && fpm -s dir -t $(TARGET) \

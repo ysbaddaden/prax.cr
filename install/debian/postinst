@@ -4,6 +4,5 @@ case "$1" in
     configure)
         update-rc.d prax defaults
         /etc/init.d/prax start
-        sed -i -r -e '/\bprax\b/ !s/^hosts:(.+)\bdns\b/hosts:\1prax dns/' /etc/nsswitch.conf
         ;;
 esac
