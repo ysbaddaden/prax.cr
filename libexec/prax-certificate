@@ -15,6 +15,7 @@
 set -e
 
 ssl_path="$PRAX_ROOT/ssl"
+mkdir -p "$ssl_path"
 
 case "$1" in
 "" | "generate")
