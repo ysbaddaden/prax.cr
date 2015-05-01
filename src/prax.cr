@@ -47,6 +47,9 @@ module Signal
   trap(TERM) { Prax.stop; exit }
   trap(QUIT) { Prax.stop; exit }
   trap(PIPE, IGNORE)
+
+  # FIXME: setting SIGCHLD to SIG_IGN doesn't work as expected (SIGCHLD isn't signaled)
+  trap(CHLD, IGNORE)
 end
 
 OptionParser.parse! do |opts|

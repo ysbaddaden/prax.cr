@@ -1,3 +1,5 @@
+require "thread"
+
 module Prax
   class Spawner
     getter :app, :path
@@ -91,7 +93,7 @@ module Prax
       sock.close if sock
     end
 
-    # TODO: SIGCHLD trap that will wait all child PIDs with WNOHANG
+    # FIXME: setting SIGCHLD to SIG_IGN doesn't work as expected (SIGCHLD isn't signaled)
     private def reap!
       Thread.new do
         if pid = @pid

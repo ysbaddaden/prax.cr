@@ -3,7 +3,7 @@
 <section>
   <p>
     When you access <code>http://<%= @host %>/</code>, Prax looks for a Rack
-    application at <code><%= File.join(@hosts, @name) %></code>.
+    application at <code><%= File.join(@hosts, @name.to_s) %></code>.
     To run your app at this domain:
   </p>
 

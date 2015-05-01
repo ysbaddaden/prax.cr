@@ -1,4 +1,3 @@
-require "thread"
 require "./application/path"
 require "./application/finders"
 require "./application/spawner"

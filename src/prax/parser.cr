@@ -7,8 +7,8 @@ module Prax
     STATUS_LINE_RE = /\A(HTTP\/[\d.]+)[ \t]+(\d+)[ \t]+(.+?)\Z/
     HEADER_RE = /([^:]+):\s+(.+)/
 
-    class InvalidRequest < Exception
-    end
+    class InvalidRequest < Exception; end
+    class EOF < InvalidRequest; end
 
     def initialize(@socket)
     end
@@ -53,7 +53,7 @@ module Prax
       if line = @socket.gets
         line.strip
       else
-        raise "EOF"
+        raise EOF.new
       end
     end
   end

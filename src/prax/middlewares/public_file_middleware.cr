@@ -35,7 +35,7 @@ module Prax
       def path(handler)
         public_path = handler.app.path.public_path
         uri = URI.parse(handler.request.uri)
-        File.join(public_path, uri.path)
+        File.join(public_path, uri.path.to_s)
       end
 
       def file?(file_path)

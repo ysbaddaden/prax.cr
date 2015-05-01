@@ -1,7 +1,6 @@
 require "socket"
 require "openssl"
 require "./handler"
-require "../queue"
 
 # FIXME: hotfix to get Prax to compile, compiler insists on count being i64
 #        whereas in practice it's actually an i32.
@@ -15,20 +14,8 @@ module Prax
   class Server
     getter :servers
 
-    struct Connection
-      property :socket, :ssl
-      def initialize(@socket, @ssl); end
-    end
-
     def initialize
       @servers = [] of TCPServer
-      @queue = Queue(Connection).new
-
-      @workers = (1..16).map do
-        Thread.new do
-          loop { handle_client(@queue.pop) }
-        end
-      end
     end
 
     def run(http_port, https_port)
@@ -40,23 +27,15 @@ module Prax
         servers << TCPServer.new("::", https_port)
       end
 
-      loop do
-        ios = nil
-
-        begin
-          ios = IO.select(servers)
-        rescue ex : Errno
-          next if ex.errno == Errno::EINTR
-          raise ex
-        end
-        next unless ios
-
-        servers.each_with_index do |server, index|
-          if ios.includes?(server)
-            @queue.push(Connection.new(server.accept, index == 1))
-          end
+      # each server accepts connections in its own fiber
+      servers.each_with_index do |server, index|
+        spawn do
+          loop { handle_client(server.accept, index == 1) }
         end
       end
+
+      # blocks execution without blocking io
+      loop { sleep 10000 }
     rescue ex
       stop
       raise ex
@@ -66,12 +45,13 @@ module Prax
       servers.each(&.close)
     end
 
-    private def handle_client(connection)
-      if connection.ssl
-        ssl_socket = OpenSSL::SSL::Socket.new(connection.socket, :server, ssl_context)
-        Handler.new(ssl_socket, connection.socket)
+    # TODO: enable keepalive support
+    private def handle_client(socket, ssl)
+      if ssl
+        ssl_socket = OpenSSL::SSL::Socket.new(socket, :server, ssl_context)
+        Handler.new(ssl_socket, socket)
       else
-        Handler.new(connection.socket)
+        Handler.new(socket)
       end
 
       #loop do
@@ -102,15 +82,15 @@ module Prax
         debug_exception(ex)
       end
 
-    #rescue ex : Parser::InvalidRequest
-    #  Prax.logger.debug "invalid request: #{ex.message}"
+    rescue ex : Parser::EOF
+      # silence
 
     rescue ex
       debug_exception(ex)
 
     ensure
       ssl_socket.try(&.close) if ssl_socket
-      connection.socket.close
+      socket.close
     end
 
     private def debug_exception(ex)
@@ -129,7 +109,7 @@ module Prax
     end
 
     private def ssl_path(extname)
-      File.join(ENV["PRAX_ROOT"], "ssl", "server.#{extname}")
+      File.join(Prax.root_path, "ssl", "server.#{extname}")
     end
   end
 end

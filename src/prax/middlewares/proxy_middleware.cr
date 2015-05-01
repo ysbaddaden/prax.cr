@@ -6,7 +6,7 @@ module Prax
         app.start unless app.started?
         app.restart if app.needs_restart?
 
-        Prax.logger.debug "connecting to: #{app.name}"
+        #Prax.logger.debug "connecting to: #{app.name}"
         app.connect { |server| proxy(handler, server) }
       end
 

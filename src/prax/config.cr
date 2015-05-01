@@ -8,7 +8,7 @@ module Prax
   end
 
   def self.logger_level
-    @@logger_level ||= ENV.has_key?("PRAX_DEBUG") ? Logger::DEBUG : Logger::INFO
+    @@logger_level ||= Logger::INFO
   end
 
   def self.logger_level=(level : Logger::Severity)
@@ -47,5 +47,9 @@ module Prax
 
   def self.https_port=(port)
     @@https_port = port
+  end
+
+  def self.root_path
+    ENV["PRAX_ROOT"]
   end
 end
