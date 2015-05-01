@@ -1,7 +1,7 @@
 module Prax
   module Monitor
-    DELAY = 5.seconds.total_seconds
-    TTL = 4.seconds
+    DELAY = 5.minutes.total_seconds
+    TTL = 9.minutes
 
     def self.clear_stalled_applications
       Prax.logger.debug "clearing stalled applications"
