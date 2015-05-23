@@ -39,7 +39,7 @@ module Prax
       end
     end
 
-    class Headers(Header) < Array(Header)
+    class Headers < Array(Header)
       def prepend(name, value)
         if header = find { |h| h.name == name }
           header.unshift(value.to_s)
