@@ -32,3 +32,6 @@ DEPENDENCIES
   minitest
   puma
   rake
+
+BUNDLED WITH
+   1.10.3

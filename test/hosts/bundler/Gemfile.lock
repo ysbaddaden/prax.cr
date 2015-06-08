@@ -10,3 +10,6 @@ PLATFORMS
 
 DEPENDENCIES
   sinatra (~> 1.0.0)
+
+BUNDLED WITH
+   1.10.3

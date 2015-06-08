@@ -1,5 +1,6 @@
 /bin/prax-binary
 /.crystal
+/.vagrant
 /dist
 /packages
 /test/hosts/_logs

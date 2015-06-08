@@ -15,7 +15,8 @@ DOCDIR = $(PREFIX)/opt/prax/doc
 #GNOME_AUTOSTART = $(PREFIX)/usr/share/gnome/autostart
 VERSION = `cat ../VERSION`
 
-DEB_DEPENDENCIES = "-d 'libpcre3' -d 'libgc1c2' -d 'libunwind8 | libunwind7'"
+#DEB_DEPENDENCIES = "-d 'libpcre3' -d 'libgc1c2' -d 'libunwind8 | libunwind7'"
+DEB_DEPENDENCIES = "-d 'libssl1.0.0'"
 
 SOURCES = $(wildcard src/*.cr) $(wildcard src/**/*.cr)
 
@@ -23,7 +24,7 @@ SOURCES = $(wildcard src/*.cr) $(wildcard src/**/*.cr)
 
 all: $(SOURCES)
 	mkdir -p bin
-	$(CRYSTAL_BIN) build $(CURDIR)/src/prax.cr -o bin/prax-binary
+	$(CRYSTAL_BIN) build --debug $(CURDIR)/src/prax.cr -o bin/prax-binary
 
 release: $(SOURCES)
 	mkdir -p $(BINDIR)
@@ -73,6 +74,11 @@ deb:
 	mkdir -p packages
 	mv dist/*.deb packages
 
+.PHONY: test
+test: release
+	bundle exec rake test
+
+.PHONY: clean
 clean:
 	rm -rf .crystal bin/prax-binary dist test/hosts/_logs
 	cd ext && make clean
