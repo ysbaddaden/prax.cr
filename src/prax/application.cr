@@ -1,7 +1,6 @@
 require "./application/path"
 require "./application/finders"
 require "./application/spawner"
-require "../kill"
 require "../spawn"
 
 module Prax

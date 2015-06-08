@@ -42,15 +42,12 @@ module Prax
   end
 end
 
-module Signal
-  trap(INT)  { Prax.stop; exit }
-  trap(TERM) { Prax.stop; exit }
-  trap(QUIT) { Prax.stop; exit }
-  trap(PIPE, IGNORE)
+Signal::INT.trap  { Prax.stop; exit }
+Signal::TERM.trap { Prax.stop; exit }
+Signal::QUIT.trap { Prax.stop; exit }
 
-  # FIXME: setting SIGCHLD to SIG_IGN doesn't work as expected (SIGCHLD isn't signaled)
-  trap(CHLD, IGNORE)
-end
+# FIXME: setting SIGCHLD to SIG_IGN doesn't work as expected (SIGCHLD isn't signaled)
+#Signal::CHLD.ignore
 
 OptionParser.parse! do |opts|
   opts.banner = "prax"

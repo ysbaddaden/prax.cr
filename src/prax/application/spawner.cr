@@ -1,4 +1,5 @@
 require "thread"
+require "../../kill"
 
 module Prax
   class Spawner
@@ -35,7 +36,7 @@ module Prax
 
     def kill
       if pid = @pid
-        Process.kill(pid, Signal::TERM)
+        Process.kill(Signal::TERM, pid)
       end
 
       reap!
