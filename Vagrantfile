@@ -1,11 +1,11 @@
-PROVISION_SCRIPT = <<SHELL
+DEBIAN_SCRIPT = <<SHELL
 # global dependencies
 apt-get update
 apt-get --yes upgrade
-apt-get --yes install build-essential llvm-3.5-dev
+apt-get --yes install build-essential llvm-3.5-dev rpm
 
 # crystal dependencies
-apt-get --yes install libpcre3-dev libevent-dev liblzma-dev
+#apt-get --yes install libpcre3-dev libevent-dev liblzma-dev
 #apt-get --yes install libgc-dev libunwind8-dev libpcl-dev
 
 # prax dependencies
@@ -33,11 +33,32 @@ cd /vagrant && bundle install
 apt-get clean
 SHELL
 
+REDHAT_SCRIPT = <<SHELL
+# global dependencies
+yum install epel-release
+#yum -y groupinstall "Development Tools"
+yum -y install llvm
+
+# crystal dependencies
+# ...
+
+# prax dependencies
+# ...
+
+# crystal
+# ...
+
+# ruby
+# ...
+
+#gem install bundler
+#cd /vagrant && bundle install
+
+#yum clean
+SHELL
+
 Vagrant.configure("2") do |config|
   config.ssh.forward_agent = true
-
-  config.vm.hostname = "prax"
-  config.vm.box = "ubuntu/trusty64"
   config.vm.box_check_update = false
 
   config.vm.provider :virtualbox do |vb|
@@ -45,10 +66,25 @@ Vagrant.configure("2") do |config|
     #vb.customize ["modifyvm", :id, "--memory", "1024"]
   end
 
-  config.vm.provider :lxc do |lxc, override|
-    override.vm.box = "fgrehm/trusty64-lxc"
-    lxc.container_name = config.vm.hostname
+  config.vm.define "ubuntu" do |box|
+    box.vm.hostname = "prax-ubuntu"
+    box.vm.box = "ubuntu/trusty64"
+    box.vm.provision "shell", inline: DEBIAN_SCRIPT
+
+    box.vm.provider :lxc do |lxc, override|
+      override.vm.box = "fgrehm/trusty64-lxc"
+      lxc.container_name = config.vm.hostname
+    end
   end
 
-  config.vm.provision "shell", inline: PROVISION_SCRIPT
+  config.vm.define "centos" do |box|
+    box.vm.hostname = "prax-centos"
+    #box.vm.box = ""
+    box.vm.provision "shell", inline: REDHAT_SCRIPT
+
+    box.vm.provider :lxc do |lxc, override|
+      override.vm.box = "frensjan/centos-7-64-lxc"
+      lxc.container_name = config.vm.hostname
+    end
+  end
 end
