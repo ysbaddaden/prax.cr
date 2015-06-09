@@ -4,17 +4,11 @@ apt-get update
 apt-get --yes upgrade
 apt-get --yes install build-essential llvm-3.5-dev rpm
 
-# crystal dependencies
-#apt-get --yes install libpcre3-dev libevent-dev liblzma-dev
-#apt-get --yes install libgc-dev libunwind8-dev libpcl-dev
+# crystal
+curl http://dist.crystal-lang.org/apt/setup.sh | sudo bash
 
 # prax dependencies
 apt-get --yes install libssl-dev
-
-# crystal
-apt-key adv --keyserver keys.gnupg.net --recv-keys 09617FD37CC06B54
-echo "deb http://dist.crystal-lang.org/apt crystal main" > /etc/apt/sources.list.d/crystal.list
-apt-get --yes install crystal
 
 # ruby (tests + packaging)
 apt-get --yes install ruby2.0 ruby2.0-dev
@@ -34,27 +28,28 @@ apt-get clean
 SHELL
 
 REDHAT_SCRIPT = <<SHELL
-# global dependencies
-yum install epel-release
-#yum -y groupinstall "Development Tools"
-yum -y install llvm
-
-# crystal dependencies
-# ...
-
-# prax dependencies
-# ...
+# gobal dependencies
+yum -y install make gcc
 
 # crystal
-# ...
+curl http://dist.crystal-lang.org/rpm/setup.sh | sudo bash
 
-# ruby
-# ...
+if [ -f /usr/bin/crystal ]; then
+  yum -y update crystal
+else
+  yum -y install crystal
+fi
 
-#gem install bundler
-#cd /vagrant && bundle install
+# prax dependencies
+yum -y install openssl-devel
 
-#yum clean
+# ruby (tests + packaging)
+yum -y install ruby-devel libffi-devel rpm-build
+
+gem install bundler --no-rdoc --no-ri
+cd /vagrant && bundle install
+
+yum clean packages
 SHELL
 
 Vagrant.configure("2") do |config|

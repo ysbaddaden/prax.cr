@@ -16,7 +16,7 @@ DOCDIR = $(PREFIX)/opt/prax/doc
 VERSION = `cat ../VERSION`
 
 DEB_DEPENDENCIES = "-d 'libssl1.0.0'"
-RPM_DEPENDENCIES = "-d 'openssl'"
+RPM_DEPENDENCIES = "-d 'openssl'" # pcre, xz ?
 
 SOURCES = $(wildcard src/*.cr) $(wildcard src/**/*.cr)
 
