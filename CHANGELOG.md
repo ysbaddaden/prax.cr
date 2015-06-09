@@ -2,6 +2,17 @@
 
 ## Unreleased
 
+- Prax now logs on `~/.prax/_logs.prax.log` when daemonized
+
+Bugfixes:
+
+- Prax no longer silently crashes when daemonized
+
+## v0.4.1
+
+- Better Debian packages
+- Compatibility with Crystal v0.7.3
+
 ## v0.4.0
 
 - Compatibility with Crystal v0.7.x
