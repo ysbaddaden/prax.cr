@@ -1,15 +1,77 @@
 require "thread"
+require "../../spawn"
 require "../../kill"
 
 module Prax
   class Spawner
-    getter :app, :path
+    getter :app, :path, :started_at, :channel
+    getter! :exception
 
     def initialize(@app)
       @path = @app.path
+      @channel = BufferedChannel(Tuple(UnbufferedChannel(String), String)).new
+
+      ::spawn do
+        loop do
+          callee, command = @channel.receive
+          execute(callee, command)
+        end
+      end
     end
 
-    def spawn_rack_application
+    def started?
+      !!@started_at
+    end
+
+    def stopped?
+      !started?
+    end
+
+    private def execute(callee, command)
+      case command
+      when "start"
+        start
+      when "stop"
+        stop
+      when "restart"
+        stop(restart: true)
+        start(restart: true)
+      end
+    rescue ErrorStartingApplication
+      callee.send("error")
+    rescue ex
+      @exception = ex
+      callee.send("exception")
+    else
+      callee.send("ok")
+    end
+
+    private def start(restart = false)
+      return if started?
+      action = restart ? "restarting" : "starting"
+
+      if path.rack?
+        Prax.logger.info "#{action} rack application: #{app.name} (port #{app.port})"
+        spawn_rack_application
+      elsif path.shell?
+        Prax.logger.info "#{action} shell application: #{app.name} (port #{app.port})"
+        spawn_shell_application
+      else
+      end
+
+      @started_at = Time.utc_now
+    end
+
+    private def stop(restart = false)
+      return if stopped?
+
+      Prax.logger.info "killing application: #{app.name}" unless restart
+      kill
+
+      @started_at = nil
+    end
+
+    private def spawn_rack_application
       cmd = [] of String
       cmd += ["bundle", "exec"] if path.gemfile?
       cmd += ["rackup", "--host", "localhost", "--port", app.port.to_s]
@@ -22,7 +84,7 @@ module Prax
       wait!
     end
 
-    def spawn_shell_application
+    private def spawn_shell_application
       cmd = ["sh", path.to_s]
       env = load_env
       env["PORT"] = app.port.to_s
@@ -34,7 +96,7 @@ module Prax
       wait!
     end
 
-    def kill
+    private def kill
       if pid = @pid
         Process.kill(Signal::TERM, pid)
       end
@@ -42,7 +104,7 @@ module Prax
       reap!
     end
 
-    def load_env
+    private def load_env
       env = {} of String => String
       return env unless @app.path.env?
 
