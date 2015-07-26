@@ -28,7 +28,7 @@ module Prax
     end
 
     private def parse(re)
-      line = readline
+      line = @socket.read_line.chomp
 
       if line =~ re
         {$1, $2, $3}
@@ -39,21 +39,13 @@ module Prax
 
     private def parse_headers(object)
       loop do
-        break if (line = readline).empty?
+        break if (line = @socket.read_line.chomp).empty?
 
         if match = HEADER_RE.match(line)
           object.add_header(match[1], match[2])
         else
           raise InvalidRequest.new("invalid header: '#{line}'")
         end
-      end
-    end
-
-    private def readline
-      if line = @socket.gets
-        line.strip
-      else
-        raise EOF.new
       end
     end
   end
