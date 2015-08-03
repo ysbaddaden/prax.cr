@@ -2,11 +2,16 @@
 
 ## Unreleased
 
+## v0.4.2
+
+Features:
+
 - Prax now logs on `~/.prax/_logs.prax.log` when daemonized
 
-Bugfixes:
+Fixes:
 
-- Prax no longer silently crashes when daemonized
+- Prax crashed when starting as a daemon
+- Prax hanged forever with concurrent requests to an app while it spawned
 
 ## v0.4.1
 

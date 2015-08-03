@@ -24,7 +24,7 @@ SOURCES = $(wildcard src/*.cr) $(wildcard src/**/*.cr)
 
 all: $(SOURCES)
 	mkdir -p bin
-	$(CRYSTAL_BIN) build --debug $(CURDIR)/src/prax.cr -o bin/prax-binary
+	$(CRYSTAL_BIN) build $(CURDIR)/src/prax.cr -o bin/prax-binary
 
 release: $(SOURCES)
 	mkdir -p $(BINDIR)
