@@ -35,7 +35,7 @@ module Prax
       end
 
       def to_i
-        value.to_i
+        value.try(&.to_i) || 0
       end
     end
 

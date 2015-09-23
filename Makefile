@@ -1,6 +1,7 @@
-ifndef CRYSTAL_BIN
-	CRYSTAL_BIN = `which crystal`
-endif
+#ifndef CRYSTAL_BIN
+#	CRYSTAL_BIN := $(shell which crystal)
+#endif
+CRYSTAL_BIN := $(shell which crystal)
 
 ifndef PREFIX
 	PREFIX = $(CURDIR)/dist
@@ -75,7 +76,7 @@ deb:
 	mv dist/*.deb packages
 
 .PHONY: test
-test: release
+test: all
 	bundle exec rake test
 
 .PHONY: clean

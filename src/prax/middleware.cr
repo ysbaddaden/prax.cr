@@ -17,9 +17,8 @@ module Prax
     end
 
     def run(handler)
-      continue = false
-
       middlewares.each do |middleware|
+        continue = false
         middleware.call(handler) { continue = true }
         break unless continue
       end

@@ -13,7 +13,7 @@ module Prax
         end
 
         if file?(file_path)
-          Prax.logger.debug "serving '#{file_path}'"
+          Prax.logger.debug { "serving '#{file_path}'" }
           stat = File::Stat.new(file_path)
           type = MIME_TYPES.fetch(File.extname(file_path).downcase, DEFAULT_MIME_TYPE)
 
@@ -27,6 +27,7 @@ module Prax
         elsif handler.app.proxyable?
           yield
         else
+          Prax.logger.debug { "not found '#{file_path}'" }
           uri = URI.parse(handler.request.uri)
           handler.reply 404, handler.views.not_found(uri.path, handler.request.host)
         end
@@ -47,11 +48,11 @@ module Prax
       end
 
       def stream_file(client, file_path)
-        buffer :: UInt8[2048]
+        buffer = Slice(UInt8).new(2048)
 
         File.open(file_path, "rb") do |file|
-          while (read_bytes = file.read(buffer.to_slice)) > 0
-            client.write(buffer.to_slice, read_bytes)
+          while (read_bytes = file.read(buffer)) > 0
+            client.write(buffer[0, read_bytes])
           end
         end
       end

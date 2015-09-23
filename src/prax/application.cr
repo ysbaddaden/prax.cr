@@ -43,8 +43,8 @@ module Prax
         return true
       end
 
-      if path.restart? && spawner.started_at
-        return spawner.started_at.to_i < File::Stat.new(path.restart_path).mtime.to_i
+      if path.restart? && (started_at = spawner.started_at)
+        return started_at.epoch < File::Stat.new(path.restart_path).mtime.epoch
       end
 
       false
@@ -54,8 +54,8 @@ module Prax
       @port ||= if path.rack? || path.shell?
                   find_available_port
                 elsif path.forwarding?
-                  path.port
-                end.to_i
+                  path.port.to_i
+                end
     end
 
     def connect
@@ -76,12 +76,12 @@ module Prax
     end
 
     def proxyable?
-      port > 0
+      path.rack? || path.forwarding? || path.shell?
     end
 
     private def find_available_port
       server = TCPServer.new(0)
-      server.addr.ip_port
+      server.addr.ip_port.not_nil! # shut up crystal
     ensure
       server.close if server
     end
@@ -89,7 +89,7 @@ module Prax
     # Sends a start, stop or restart commend to the spawner coroutine, then
     # waits for the coroutine to send a reply message.
     private def execute(command)
-      channel = UnbufferedChannel(String).new
+      channel = Channel::Unbuffered(String).new
       spawner.channel.send({channel, command})
 
       case message = channel.receive

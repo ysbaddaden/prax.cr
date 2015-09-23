@@ -1,6 +1,4 @@
 require "thread"
-require "../../spawn"
-require "../../kill"
 
 module Prax
   class Spawner
@@ -9,7 +7,7 @@ module Prax
 
     def initialize(@app)
       @path = @app.path
-      @channel = BufferedChannel(Tuple(UnbufferedChannel(String), String)).new
+      @channel = Channel::Buffered(Tuple(Channel::Unbuffered(String), String)).new
 
       ::spawn do
         loop do
@@ -78,7 +76,7 @@ module Prax
       env = load_env
 
       File.open(path.log_path, "w") do |log|
-        @pid = Process.spawn(cmd, env: env, output: log, error: log, chdir: path.to_s)
+        @process = Process.new(cmd.first, cmd[1 .. -1], env: env, output: log, error: log, chdir: path.to_s)
       end
 
       wait!
@@ -90,25 +88,23 @@ module Prax
       env["PORT"] = app.port.to_s
 
       File.open(path.log_path, "w") do |log|
-        @pid = Process.spawn(cmd, env: env, output: log, error: log)
+        @process = Process.new(cmd.first, cmd[1 .. - 1], env: env, output: log, error: log, chdir: path.to_s)
       end
 
       wait!
     end
 
     private def kill
-      if pid = @pid
-        Process.kill(Signal::TERM, pid)
+      if process = @process
+        process.kill
       end
-
-      reap!
     end
 
     private def load_env
       env = {} of String => String
       return env unless @app.path.env?
 
-      Prax.logger.debug "loading #{app.name}/.env file"
+      Prax.logger.debug { "loading #{app.name}/.env file" }
 
       lines = File.read_lines(@app.path.env_path)
         .map { |line| line.gsub(/#.+/, "").strip }
@@ -139,7 +135,6 @@ module Prax
       end
 
       Prax.logger.error "error starting application: #{app.name}"
-      reap!
       raise ErrorStartingApplication.new
     end
 
@@ -147,30 +142,21 @@ module Prax
       sock = app.connect
       true
     rescue ex : Errno
-      unless ex.errno == Errno::ECONNREFUSED
-        reap!
-        raise ex
-      end
+      raise ex unless ex.errno == Errno::ECONNREFUSED
       false
     ensure
       sock.close if sock
     end
 
-    # FIXME: setting SIGCHLD to SIG_IGN doesn't work as expected (SIGCHLD isn't signaled)
-    private def reap!
-      Thread.new do
-        if pid = @pid
-          Process.waitpid(pid)
-        end
-      end
-    end
-
     private def alive?
-      return false unless pid = @pid
-      Process.waitpid(pid, LibC::WNOHANG)
-      true
+      if process = @process
+        exit_code :: LibC::Int
+        LibC.waitpid(process.pid, pointerof(exit_code), LibC::WNOHANG) != -1
+      else
+        false
+      end
     rescue
-      @pid = nil
+      @process = nil
       false
     end
   end

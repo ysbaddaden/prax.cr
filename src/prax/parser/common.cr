@@ -16,7 +16,7 @@ module Prax
       end
 
       def content_length
-        header("Content-Length").to_i
+        header("Content-Length").try(&.to_i) || 0
       end
     end
   end

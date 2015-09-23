@@ -24,7 +24,7 @@ module Prax
       ::sleep DELAY
       clear_stalled_applications
     rescue ex
-      Prax.logger.debug "monitor crashed: #{ex}"
+      Prax.logger.error "monitor crashed: #{ex}"
     end
   end
 end

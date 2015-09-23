@@ -6,7 +6,7 @@ module Prax
         app.start unless app.started?
         app.restart if app.needs_restart?
 
-        #Prax.logger.debug "connecting to: #{app.name}"
+        #Prax.logger.debug { "connecting to: #{app.name}" }
         app.connect { |server| proxy(handler, server) }
       end
 
@@ -14,7 +14,7 @@ module Prax
       # TODO: stream both sides (ie. support websockets)
       def proxy(handler, server)
         request, client = handler.request, handler.client
-        Prax.logger.debug "#{request.method} #{request.uri}"
+        Prax.logger.debug { "#{request.method} #{request.uri}" }
 
         server << "#{request.method} #{request.uri} #{request.http_version}\r\n"
         server << proxy_headers(request, handler.tcp_socket).map(&.to_s).join("\r\n")

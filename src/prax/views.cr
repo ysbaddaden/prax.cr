@@ -11,7 +11,7 @@ module Prax
 
     def initialize
       if Prax.hosts_path.starts_with?(ENV["HOME"])
-        @hosts = "~" + Prax.hosts_path[ENV["HOME"].length..-1]
+        @hosts = "~" + Prax.hosts_path[ENV["HOME"].size .. -1]
       else
         @hosts = Prax.hosts_path
       end

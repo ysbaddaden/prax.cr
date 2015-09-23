@@ -45,8 +45,8 @@ Signal::INT.trap  { Prax.stop; exit }
 Signal::TERM.trap { Prax.stop; exit }
 Signal::QUIT.trap { Prax.stop; exit }
 
-# FIXME: setting SIGCHLD to SIG_IGN doesn't work as expected (SIGCHLD isn't signaled)
-#Signal::CHLD.ignore
+# If a child process exits, reap it. End of story.
+Signal::CHLD.trap { LibC.waitpid(-1, out exit_code, 0) }
 
 OptionParser.parse! do |opts|
   opts.banner = "prax"
@@ -84,6 +84,10 @@ OptionParser.parse! do |opts|
     puts opts
     exit
   end
+end
+
+lib LibC
+  fun setsid() : PidT
 end
 
 if Prax.daemonize
