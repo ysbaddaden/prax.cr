@@ -2,6 +2,13 @@
 
 ## Unreleased
 
+- Upgraded to Crystal 0.8.0 (uses standard Process.new and dropped deprecations)
+- Generic SIGCHLD handler to reap zombie children (no more reap threads)
+
+Fixes:
+
+- Proxy middleware was always run after public file middleware
+
 ## v0.4.2
 
 Features:
