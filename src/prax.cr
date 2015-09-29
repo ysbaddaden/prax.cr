@@ -90,6 +90,12 @@ lib LibC
   fun setsid() : PidT
 end
 
+class IO::FileDescriptor
+  def reopen(path : String, mode = "r")
+    reopen(File.open(path, mode))
+  end
+end
+
 if Prax.daemonize
   exit if fork
   LibC.setsid
@@ -97,9 +103,9 @@ if Prax.daemonize
   exit if fork
   Dir.chdir "/"
 
-  File.open("/dev/null").reopen(STDIN)
-  File.open(File.join(Prax.logs_path, "prax.log"), "w").reopen(STDOUT)
-  File.open(File.join(Prax.logs_path, "prax.log"), "w").reopen(STDERR)
+  STDIN.reopen("/dev/null")
+  STDOUT.reopen(File.join(Prax.logs_path, "prax.log"), "w")
+  STDERR.reopen(File.join(Prax.logs_path, "prax.log"), "w")
 
   Prax.start
 end
