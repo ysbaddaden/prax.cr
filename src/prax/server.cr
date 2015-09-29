@@ -85,7 +85,7 @@ module Prax
         debug_exception(ex)
       end
 
-    rescue ex : Parser::EOF
+    rescue ex : IO::EOFError
       # silence
 
     rescue ex

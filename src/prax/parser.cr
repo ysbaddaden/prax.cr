@@ -8,7 +8,6 @@ module Prax
     HEADER_RE = /([^:]+):\s+(.+)/
 
     class InvalidRequest < Exception; end
-    class EOF < InvalidRequest; end
 
     def initialize(@socket)
     end
