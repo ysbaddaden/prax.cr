@@ -59,20 +59,10 @@ module Prax
     end
 
     def connect
-      socket = connect
-      begin
-        yield socket
-      ensure
-        socket.close
-      end
-    end
-
-    def connect
-      #if path.rack?
-      #  UNIXSocket.new(path.socket_path)
-      #else
-        TCPSocket.new("127.0.0.1", port)
-      #end
+      socket = TCPSocket.new("127.0.0.1", port)
+      yield socket
+    ensure
+      socket.try(&.close)
     end
 
     def proxyable?
@@ -83,7 +73,7 @@ module Prax
       server = TCPServer.new(0)
       server.addr.ip_port.not_nil! # shut up crystal
     ensure
-      server.close if server
+      server.try(&.close)
     end
 
     # Sends a start, stop or restart commend to the spawner coroutine, then
@@ -98,6 +88,8 @@ module Prax
       when "exception"
         raise spawner.exception
       end
+    ensure
+      channel.try(&.close)
     end
 
     private def spawner

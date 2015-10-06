@@ -2,14 +2,6 @@ require "socket"
 require "openssl"
 require "./handler"
 
-# FIXME: hotfix to get Prax to compile, compiler insists on count being i64
-#        whereas in practice it's actually an i32.
-class OpenSSL::SSL::Socket
-  def write(slice : Slice(UInt8), count)
-    LibSSL.ssl_write(@ssl, slice.pointer(count), count.to_i32)
-  end
-end
-
 module Prax
   class Server
     getter :servers
@@ -31,8 +23,7 @@ module Prax
       servers.each_with_index do |server, index|
         spawn do
           loop do
-            socket = server.accept
-            spawn { handle_client(socket, index == 1) }
+            spawn handle_client(server.accept, index == 1)
           end
         end
       end

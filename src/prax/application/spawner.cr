@@ -139,13 +139,10 @@ module Prax
     end
 
     private def connectable?
-      sock = app.connect
-      true
+      app.connect { true }
     rescue ex : Errno
       raise ex unless ex.errno == Errno::ECONNREFUSED
       false
-    ensure
-      sock.close if sock
     end
 
     private def alive?
