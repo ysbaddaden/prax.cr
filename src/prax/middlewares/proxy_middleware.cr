@@ -19,15 +19,20 @@ module Prax
         server << "#{request.method} #{request.uri} #{request.http_version}\r\n"
         server << proxy_headers(request, handler.tcp_socket).map(&.to_s).join("\r\n")
         server << "\r\n\r\n"
-        server << client.read(request.content_length) if request.content_length > 0
+
+        if (len = request.content_length) > 0
+          copy_stream(client, server, len)
+        end
 
         response = Parser.new(server).parse_response
         client << response.to_s
 
         if response.header("Transfer-Encoding") == "chunked"
           stream_chunked_response(server, client)
-        elsif response.content_length > 0
-          client << server.read(response.content_length)
+        elsif (len = response.content_length) > 0
+          copy_stream(server, client, len)
+        elsif response.header("Connection") == "close"
+          copy_stream(server, client)
         else
           # TODO: read until EOF / connection close?
         end
@@ -46,17 +51,32 @@ module Prax
       def stream_chunked_response(server, client)
         loop do
           break unless line = server.gets
-
           client << line
           count = line.strip.to_i(16)
+          copy_stream(server, client, count + 2) # chunk + CRLF
+          break if count == 0
+        end
+      end
 
-          if count == 0
-            client << server.read(2) # CRLF
-            break
-          else
-            client << server.read(count)
-            client << server.read(2) # CRLF
-          end
+      private def copy_stream(input, output, len)
+        buffer :: UInt8[2048]
+
+        while len > 0
+          count = input.read(buffer.to_slice[0, Math.min(len, buffer.size)])
+          break if count == 0
+
+          output.write(buffer.to_slice[0, count])
+          len -= count
+        end
+      end
+
+      private def copy_stream(input, output)
+        buffer :: UInt8[2048]
+
+        loop do
+          count = input.read(buffer.to_slice[0, buffer.size])
+          break if count == 0
+          output.write(buffer.to_slice[0, count])
         end
       end
     end
