@@ -101,7 +101,7 @@ if Prax.daemonize
   LibC.setsid
 
   exit if fork
-  Dir.chdir "/"
+  Dir.cd "/"
 
   STDIN.reopen("/dev/null")
   STDOUT.reopen(File.join(Prax.logs_path, "prax.log"), "w")
