@@ -50,6 +50,10 @@ module Prax
       end
     end
 
+    def ssl?
+      @client.is_a?(OpenSSL::SSL::Socket)
+    end
+
     def app
       @app ||= Application.search(request.host)
     end

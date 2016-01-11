@@ -17,7 +17,7 @@ module Prax
         Prax.logger.debug { "#{request.method} #{request.uri}" }
 
         server << "#{request.method} #{request.uri} #{request.http_version}\r\n"
-        server << proxy_headers(request, handler.tcp_socket).map(&.to_s).join("\r\n")
+        server << proxy_headers(request, handler.tcp_socket, handler.ssl?).map(&.to_s).join("\r\n")
         server << "\r\n\r\n"
 
         if (len = request.content_length) > 0
@@ -39,11 +39,11 @@ module Prax
       end
 
       # FIXME: should dup the headers to avoid altering the request
-      def proxy_headers(request, socket)
+      def proxy_headers(request, socket, ssl)
         request.headers.replace("Connection", "close")
         request.headers.prepend("X-Forwarded-For", socket.peeraddr.ip_address)
         request.headers.replace("X-Forwarded-Host", request.host)
-        request.headers.replace("X-Forwarded-Proto", "http") # TODO: https
+        request.headers.replace("X-Forwarded-Proto", ssl ? "https" : "http")
         request.headers.prepend("X-Forwarded-Server", socket.addr.ip_address)
         request.headers
       end

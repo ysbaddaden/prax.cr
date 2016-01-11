@@ -1,5 +1,10 @@
 # CHANGELOG
 
+## Unreleased
+
+Fixes:
+- Correct values for X-Forwarded-Proto proxy header (https, http)
+
 ## v0.5.0
 
 Enhancements:
