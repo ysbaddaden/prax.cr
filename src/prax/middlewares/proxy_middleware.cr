@@ -59,7 +59,7 @@ module Prax
       end
 
       private def copy_stream(input, output, len)
-        buffer :: UInt8[2048]
+        buffer = uninitialized UInt8[2048]
 
         while len > 0
           count = input.read(buffer.to_slice[0, Math.min(len, buffer.size)])
@@ -71,7 +71,7 @@ module Prax
       end
 
       private def copy_stream(input, output)
-        buffer :: UInt8[2048]
+        buffer = uninitialized UInt8[2048]
 
         loop do
           count = input.read(buffer.to_slice[0, buffer.size])

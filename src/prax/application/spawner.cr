@@ -147,7 +147,7 @@ module Prax
 
     private def alive?
       if process = @process
-        exit_code :: LibC::Int
+        exit_code = uninitialized LibC::Int
         LibC.waitpid(process.pid, pointerof(exit_code), LibC::WNOHANG) != -1
       else
         false
