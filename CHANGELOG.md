@@ -1,9 +1,13 @@
 # CHANGELOG
 
-## Unreleased
+## v0.5.1
+
+Enhancements:
+- Upgraded to Crystal 0.11.0 (syntax changes)
 
 Fixes:
 - Correct values for X-Forwarded-Proto proxy header (https, http)
+- Leaks file descriptors, see https://github.com/manastech/crystal/issues/1700
 
 ## v0.5.0
 
