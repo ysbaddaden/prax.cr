@@ -5,7 +5,7 @@ module Prax
   class Views
     macro render(name)
       String.build do |__str__|
-        embed_ecr "#{{{__DIR__}}}/templates/{{name.id}}.ecr", "__str__"
+        ECR.embed("#{{{__DIR__}}}/templates/{{name.id}}.ecr", "__str__")
       end
     end
 
