@@ -1,0 +1,6 @@
+# Copy this file to /etc/NetworkManager/dnsmasq.d/prax
+# or alternatively place the lines in /etc/dnsmasq.d directly depending on your setup.
+
+local=/dev/
+address=/dev/127.0.0.1
+address=/dev/::1

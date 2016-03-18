@@ -1,0 +1,16 @@
+# Copy this file to /etc/systemd/system/prax-iptables.service
+
+[Unit]
+Description=Prax (iptables configuration)
+DefaultDependencies=no
+Requires=network.target remote-fs.target
+After=network.target remote-fs.target
+
+[Service]
+Type=oneshot
+ExecStart=/usr/local/sbin/prax-iptables start
+ExecStop=/usr/local/sbin/prax-iptables stop
+RemainAfterExit=yes
+
+[Install]
+WantedBy=multi-user.target

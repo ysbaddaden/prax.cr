@@ -1,0 +1,14 @@
+# Copy to ~/.config/systemd/user/prax.service
+
+[Unit]
+Description=Prax
+
+[Service]
+Type=simple
+RemainAfterExit=yes
+ExecStart=/usr/local/bin/prax start
+ExecStop=/usr/local/bin/prax stop
+WorkingDirectory=%h
+
+[Install]
+WantedBy=default.target
