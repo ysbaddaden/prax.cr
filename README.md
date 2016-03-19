@@ -10,8 +10,15 @@ is now a binary application that don't rely on Ruby anymore (except for Rack and
 
 Please refer to the wiki for more information:
 
-- [Manual Install Guide](https://github.com/ysbaddaden/prax.cr/wiki/Manual-Install-Guide)
 - [User Guide](https://github.com/ysbaddaden/prax.cr/wiki/User-Guide)
+
+
+## Install
+
+You can download a Debian / Ubuntu package for 64bits kernel on the
+[releases page](https://github.com/ysbaddaden/prax.cr/releases).
+For other systems, you'll have to follow the
+[Manual Install Guide](https://github.com/ysbaddaden/prax.cr/wiki/Manual-Install-Guide).
 
 
 ## How it works
@@ -41,14 +48,6 @@ The port redirections are iptables rules, that are installed and removed using
 an initd script. The script redirects the port :80 and :443 on 127.0.0.1 and for
 each `wlanX` and `ethX` devices found on your machine, to allow incoming
 traffic, so you may use xip.io to test on external devices, as mentioned above.
-
-
-## Install
-
-Prax is getting ready for end-user consumption, but is still missing an easy
-setup. You'll may want to follow the
-[Manual Install Guide](https://github.com/ysbaddaden/prax.cr/wiki/Manual-Install-Guide)
-until deb and rpm packages are built and tested.
 
 
 ## License
