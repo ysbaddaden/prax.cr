@@ -1,0 +1,49 @@
+#!/usr/bin/env bash
+# Usage: prax iptables [start|stop|restart|status]
+# Summary: Sets or removes network port redirection rules (requires root privileges)
+set -e
+
+HTTP_PORT=20558
+HTTPS_PORT=20559
+DEVICES=$(ls /sys/class/net)
+
+case "$1" in
+  start)
+    if [ `iptables -t nat -L -n | egrep "($HTTP_PORT|$HTTPS_PORT)" | wc -l` -eq 0 ]; then
+      iptables -t nat -A OUTPUT -p tcp -d 127.0.0.1 --dport 80  -j REDIRECT --to-ports $HTTP_PORT
+      iptables -t nat -A OUTPUT -p tcp -d 127.0.0.1 --dport 443 -j REDIRECT --to-ports $HTTPS_PORT
+      ip6tables -t nat -A OUTPUT -p tcp -d ::1 --dport 80 -j REDIRECT --to-ports $HTTP_PORT
+      ip6tables -t nat -A OUTPUT -p tcp -d ::1 --dport 443 -j REDIRECT --to-ports $HTTPS_PORT
+
+      for IPTABLES in iptables ip6tables; do
+        for device in $DEVICES; do
+          $IPTABLES -t nat -A PREROUTING -p tcp -i $device --dport 80  -j REDIRECT --to-port $HTTP_PORT
+          $IPTABLES -t nat -A PREROUTING -p tcp -i $device --dport 443 -j REDIRECT --to-port $HTTPS_PORT
+        done
+      done
+    fi
+    ;;
+  stop)
+    for IPTABLES in iptables ip6tables; do
+      RULE_NUMS=`$IPTABLES -t nat -L OUTPUT --line-numbers -n | egrep "($HTTP_PORT|$HTTPS_PORT)" | awk '{a[i++]=$0} END { for (j=i-1; j>=0;) print a[j--] }' | awk -F " " '{ print $1 }'`
+      for RULE_NUM in $RULE_NUMS; do
+        $IPTABLES -t nat -D OUTPUT $RULE_NUM
+      done
+
+      RULE_NUMS=`$IPTABLES -t nat -L PREROUTING --line-numbers -n | egrep "($HTTP_PORT|$HTTPS_PORT)" | awk '{a[i++]=$0} END { for (j=i-1; j>=0;) print a[j--] }' | awk -F " " '{ print $1 }'`
+      for RULE_NUM in $RULE_NUMS; do
+        $IPTABLES -t nat -D PREROUTING $RULE_NUM
+      done
+    done
+    ;;
+  restart)
+    $0 stop
+    $0 start
+    ;;
+  status)
+    for IPTABLES in iptables ip6tables; do
+      $IPTABLES -t nat -L OUTPUT -n --line-numbers
+      $IPTABLES -t nat -L PREROUTING -n --line-numbers
+    done
+    ;;
+esac
