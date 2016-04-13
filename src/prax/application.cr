@@ -71,7 +71,7 @@ module Prax
 
     private def find_available_port
       server = TCPServer.new(0)
-      server.addr.ip_port.not_nil! # shut up crystal
+      server.local_address.port
     ensure
       server.try(&.close)
     end
