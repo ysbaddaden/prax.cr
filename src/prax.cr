@@ -33,6 +33,8 @@ module Prax
     @@server ||= Server.new
   end
 
+  @@logger : Logger?
+
   def self.logger
     @@logger ||= Logger.new(STDOUT).tap do |logger|
       logger.progname = "prax"

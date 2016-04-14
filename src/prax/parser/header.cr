@@ -1,8 +1,8 @@
 module Prax
   class Parser
     class Header
-      property :name
-      property :values
+      property name : String
+      property values : Array(String)
 
       def initialize(@name, value)
         @values = [value]

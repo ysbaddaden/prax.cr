@@ -3,7 +3,7 @@ module Prax
     @@daemonize
   end
 
-  def self.daemonize=(value)
+  def self.daemonize=(value : Bool)
     @@daemonize = value
   end
 
@@ -21,7 +21,7 @@ module Prax
     end
   end
 
-  def self.hosts_path=(path)
+  def self.hosts_path=(path : String)
     @@hosts_path = path
   end
 
@@ -29,7 +29,7 @@ module Prax
     @@logs_path ||= ENV.fetch("PRAX_LOGS", File.join(hosts_path, "_logs"))
   end
 
-  def self.logs_path=(path)
+  def self.logs_path=(path : String)
     @@logs_path = path
   end
 
@@ -37,7 +37,7 @@ module Prax
     @@http_port ||= ENV.fetch("PRAX_HTTP_PORT", 20559).to_i
   end
 
-  def self.http_port=(port)
+  def self.http_port=(port : Int32)
     @@http_port = port
   end
 
@@ -45,7 +45,7 @@ module Prax
     @@https_port ||= ENV.fetch("PRAX_HTTPS_PORT", 20558).to_i
   end
 
-  def self.https_port=(port)
+  def self.https_port=(port : Int32)
     @@https_port = port
   end
 

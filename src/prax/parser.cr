@@ -9,7 +9,7 @@ module Prax
 
     class InvalidRequest < Exception; end
 
-    def initialize(@socket)
+    def initialize(@socket : TCPSocket|OpenSSL::SSL::Socket)
     end
 
     def parse_request

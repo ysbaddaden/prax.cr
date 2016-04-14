@@ -4,6 +4,9 @@ module Prax
       new(name).exists?
     end
 
+    @name : String
+    @path : String
+
     def initialize(name)
       @name = name.to_s
       @path = File.join(Prax.hosts_path, @name)

@@ -6,7 +6,8 @@ module Prax
   end
 
   class ApplicationNotFound < Error
-    getter :name, :host
+    getter name : String
+    getter host : String
 
     def initialize(@name, @host)
       super ""

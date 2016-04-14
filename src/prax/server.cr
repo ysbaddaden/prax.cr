@@ -4,7 +4,7 @@ require "./handler"
 
 module Prax
   class Server
-    getter :servers
+    getter servers
 
     def initialize
       @servers = [] of TCPServer
@@ -94,6 +94,8 @@ module Prax
     private def ssl_configured?
       File.exists?(ssl_path(:key)) && File.exists?(ssl_path(:crt))
     end
+
+    @ssl_context : OpenSSL::SSL::Context?
 
     private def ssl_context
       @ssl_context ||= OpenSSL::SSL::Context.new.tap do |ctx|

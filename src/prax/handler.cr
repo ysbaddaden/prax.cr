@@ -19,7 +19,9 @@ module Prax
   ]
 
   class Handler
-    getter :request, :client, :tcp_socket
+    getter request : Parser::Request
+    getter client : TCPSocket|OpenSSL::SSL::Socket
+    getter tcp_socket : TCPSocket
 
     def initialize(@client, @tcp_socket = client)
       parser = Parser.new(client)
@@ -53,6 +55,8 @@ module Prax
     def ssl?
       @client.is_a?(OpenSSL::SSL::Socket)
     end
+
+    @app : Application?
 
     def app
       @app ||= Application.search(request.host)
