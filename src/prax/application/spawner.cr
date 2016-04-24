@@ -77,7 +77,7 @@ module Prax
     private def spawn_rack_application
       cmd = [] of String
       cmd += ["bundle", "exec"] if path.gemfile?
-      cmd += ["rackup", "--host", "localhost", "--port", app.port.to_s]
+      cmd += ["rackup", "--host", "127.0.0.1", "--port", app.port.to_s]
       env = load_env
 
       File.open(path.log_path, "w") do |log|
