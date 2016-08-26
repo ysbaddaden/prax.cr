@@ -26,9 +26,9 @@ module Prax
   end
 
   @@middlewares = Middleware.new do |m|
-    m.add Middlewares::WelcomeMiddleware.new
-    m.add Middlewares::PublicFileMiddleware.new
-    m.add Middlewares::ProxyMiddleware.new
+    m.add Prax::Middlewares::WelcomeMiddleware.new
+    m.add Prax::Middlewares::PublicFileMiddleware.new
+    m.add Prax::Middlewares::ProxyMiddleware.new
   end
 
   def self.run_middlewares(handler)
