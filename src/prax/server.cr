@@ -42,7 +42,7 @@ module Prax
     # TODO: enable keepalive support
     private def handle_client(socket, ssl)
       if ssl
-        ssl_socket = OpenSSL::SSL::Socket.new(socket, :server, ssl_context)
+        ssl_socket = OpenSSL::SSL::Socket::Server.new(socket, context: ssl_context)
         Handler.new(ssl_socket, socket)
       else
         Handler.new(socket)
@@ -95,10 +95,10 @@ module Prax
       File.exists?(ssl_path(:key)) && File.exists?(ssl_path(:crt))
     end
 
-    @ssl_context : OpenSSL::SSL::Context?
+    @ssl_context : OpenSSL::SSL::Context::Server?
 
     private def ssl_context
-      @ssl_context ||= OpenSSL::SSL::Context.new.tap do |ctx|
+      @ssl_context ||= OpenSSL::SSL::Context::Server.new.tap do |ctx|
         ctx.certificate_chain = ssl_path(:crt)
         ctx.private_key = ssl_path(:key)
       end
