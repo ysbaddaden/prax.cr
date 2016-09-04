@@ -1,5 +1,13 @@
 # CHANGELOG
 
+## Unreleased
+
+Enhancements:
+- Source `.praxrc` shell files in projects (eg: to configure variables, version managers, ...)
+
+Fixes:
+- Upgraded to Crystal 0.18
+
 ## v0.5.1
 
 Enhancements:
