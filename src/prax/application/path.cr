@@ -20,6 +20,10 @@ module Prax
       File.exists?(gemfile_path)
     end
 
+    def praxrc?
+      File.exists?(praxrc_path)
+    end
+
     def forwarding?
       File.file?(@path) && port > 0
     end
@@ -52,6 +56,10 @@ module Prax
 
     def gemfile_path
       File.join(@path, "Gemfile")
+    end
+
+    def praxrc_path
+      File.join(@path, ".praxrc")
     end
 
     def rackup_path
