@@ -31,7 +31,9 @@ module Prax
       end
 
       def to_s
-        "#{name}: #{values.join(", ")}"
+        values.map {|value|
+          "#{name}: #{value}"
+        }.join("\r\n")
       end
 
       def to_i
