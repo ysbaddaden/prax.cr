@@ -3,8 +3,8 @@
 # Summary: Sets or removes network port redirection rules (requires root privileges)
 set -e
 
-HTTP_PORT=20558
-HTTPS_PORT=20559
+HTTP_PORT=20559
+HTTPS_PORT=20558
 DEVICES=$(ls /sys/class/net)
 
 case "$1" in
