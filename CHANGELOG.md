@@ -1,5 +1,10 @@
 # CHANGELOG
 
+## v0.6.1
+
+Fixes:
+- Only redirect traffic from wlan/eth devices.
+
 ## v0.6.0
 
 Enhancements:
