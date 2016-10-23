@@ -5,7 +5,7 @@ set -e
 
 HTTP_PORT=20559
 HTTPS_PORT=20558
-DEVICES=$(ls /sys/class/net | egrep '^(wlan|eth)[0-9]+')
+DEVICES=$(ls /sys/class/net | egrep '^(wlan|eth|(wl|en)p)[0-9]+')
 
 case "$1" in
   start)
