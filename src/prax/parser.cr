@@ -5,7 +5,7 @@ module Prax
   class Parser
     REQUEST_LINE_RE = /\A([A-Z]+)[ \t]+(.+?)[ \t]+(HTTP\/[\d.]+)\Z/
     STATUS_LINE_RE = /\A(HTTP\/[\d.]+)[ \t]+(\d+)[ \t]+(.+?)\Z/
-    HEADER_RE = /([^:]+):\s+(.+)/
+    HEADER_RE = /([^:]+):(?:\s+(.+))?/
 
     class InvalidRequest < Exception; end
 
@@ -41,7 +41,10 @@ module Prax
         break if (line = @socket.read_line.chomp).empty?
 
         if match = HEADER_RE.match(line)
-          object.add_header(match[1], match[2])
+          name = match[1]
+          # permit empty header values
+          value = match[2]? || ""
+          object.add_header(name, value)
         else
           raise InvalidRequest.new("invalid header: '#{line}'")
         end
