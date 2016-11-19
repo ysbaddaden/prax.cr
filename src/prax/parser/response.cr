@@ -5,7 +5,10 @@ module Prax
     class Response
       include Common
 
-      getter :http_version, :code, :status, :headers
+      getter http_version : String
+      getter code : String
+      getter status : String
+      getter headers : Array(Header)
 
       def initialize(@http_version, @code, @status)
         @headers = [] of Header

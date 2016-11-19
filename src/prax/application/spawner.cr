@@ -2,11 +2,12 @@ require "thread"
 
 module Prax
   class Spawner
-    getter :app, :path, :started_at, :channel
-    getter! :exception
+    getter app : Application
+    getter channel
+    getter! exception : Exception
+    getter started_at : Time?
 
     def initialize(@app)
-      @path = @app.path
       @channel = Channel::Buffered(Tuple(Channel::Unbuffered(String), String)).new
 
       ::spawn do
@@ -15,6 +16,10 @@ module Prax
           execute(callee, command)
         end
       end
+    end
+
+    def path
+      @app.path
     end
 
     def started?
@@ -71,8 +76,10 @@ module Prax
 
     private def spawn_rack_application
       cmd = [] of String
+      cmd << File.join(ENV["PRAX_ROOT"],"bin", "prax-rc") if path.praxrc?
       cmd += ["bundle", "exec"] if path.gemfile?
       cmd += ["rackup", "--host", "localhost", "--port", app.port.to_s]
+
       env = load_env
 
       File.open(path.log_path, "w") do |log|

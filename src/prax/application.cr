@@ -6,7 +6,11 @@ module Prax
   XIP_IO = /\A(.+)\.(?:\d+\.){4}xip\.io\Z/
 
   class Application
-    getter :name, :path, :started_at, :last_accessed_at
+    getter name : String
+    getter path : Path
+    getter started_at : Time?
+    getter last_accessed_at : Time
+    @port : Int32?
 
     def initialize(name)
       @name = name.to_s
@@ -71,7 +75,7 @@ module Prax
 
     private def find_available_port
       server = TCPServer.new(0)
-      server.addr.ip_port.not_nil! # shut up crystal
+      server.local_address.port.to_i
     ensure
       server.try(&.close)
     end

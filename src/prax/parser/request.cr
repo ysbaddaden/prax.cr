@@ -6,7 +6,11 @@ module Prax
     class Request
       include Common
 
-      getter :method, :uri, :http_version, :headers
+      getter method : String
+      getter uri : String
+      getter http_version : String
+      getter headers : Headers
+      @host : String?
 
       def initialize(@method, @uri, @http_version)
         @headers = Headers.new

@@ -1,11 +1,27 @@
 # CHANGELOG
 
+## v0.6.1
+
+Fixes:
+- Only redirect traffic from wlan/eth devices.
+
+## v0.6.0
+
+Enhancements:
+- Source `.praxrc` shell files in projects (eg: to configure variables, version managers, ...)
+- Move iptables rules to `prax iptables` command
+- Upgraded to Crystal 0.18+
+
+Fixes:
+- Multiple Forwarding of repeated headers (cookies were broken)
+- Unescape filenames before searching in the public folder
+
 ## v0.5.1
 
 Enhancements:
-- Upgraded to Crystal 0.11.0 (syntax changes)
 
 Fixes:
+- Upgraded to Crystal 0.11.0 (syntax changes)
 - Correct values for X-Forwarded-Proto proxy header (https, http)
 - Leaks file descriptors, see https://github.com/manastech/crystal/issues/1700
 

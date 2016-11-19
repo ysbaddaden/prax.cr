@@ -4,6 +4,9 @@ module Prax
       new(name).exists?
     end
 
+    @name : String
+    @path : String
+
     def initialize(name)
       @name = name.to_s
       @path = File.join(Prax.hosts_path, @name)
@@ -15,6 +18,10 @@ module Prax
 
     def gemfile?
       File.exists?(gemfile_path)
+    end
+
+    def praxrc?
+      File.exists?(praxrc_path)
     end
 
     def forwarding?
@@ -49,6 +56,10 @@ module Prax
 
     def gemfile_path
       File.join(@path, "Gemfile")
+    end
+
+    def praxrc_path
+      File.join(@path, ".praxrc")
     end
 
     def rackup_path

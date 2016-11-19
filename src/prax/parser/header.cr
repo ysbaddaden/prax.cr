@@ -1,8 +1,8 @@
 module Prax
   class Parser
     class Header
-      property :name
-      property :values
+      property name : String
+      property values : Array(String)
 
       def initialize(@name, value)
         @values = [value]
@@ -31,7 +31,9 @@ module Prax
       end
 
       def to_s
-        "#{name}: #{values.join(", ")}"
+        values.map {|value|
+          "#{name}: #{value}"
+        }.join("\r\n")
       end
 
       def to_i

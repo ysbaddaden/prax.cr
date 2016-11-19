@@ -9,6 +9,15 @@ module Prax
       end
     end
 
+    @exception : Exception?
+    @hosts : String
+    @host : String?
+    @log : String?
+    @name : String?
+    @path : String?
+    @port : Int32?
+    @title : String?
+
     def initialize
       if Prax.hosts_path.starts_with?(ENV["HOME"])
         @hosts = "~" + Prax.hosts_path[ENV["HOME"].size .. -1]
