@@ -5,7 +5,6 @@ Description=Prax
 
 [Service]
 Type=simple
-RemainAfterExit=yes
 ExecStart=/usr/local/bin/prax start
 ExecStop=/usr/local/bin/prax stop
 WorkingDirectory=%h
