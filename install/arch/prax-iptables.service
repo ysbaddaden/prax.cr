@@ -8,8 +8,8 @@ After=network.target remote-fs.target
 
 [Service]
 Type=oneshot
-ExecStart=/usr/local/sbin/prax-iptables start
-ExecStop=/usr/local/sbin/prax-iptables stop
+ExecStart=/opt/prax/libexec/prax-iptables start
+ExecStop=/opt/prax/libexec/prax-iptables stop
 RemainAfterExit=yes
 
 [Install]
