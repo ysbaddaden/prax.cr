@@ -62,4 +62,10 @@ class ProxyTest < Minitest::Test
       assert_equal "::1, 10.0.3.1", headers["HTTP_X_FORWARDED_SERVER"]
     end
   end
+
+  def test_empty_header
+    response = Net::HTTP.get_response(URI("http://empty-header.dev:20557/"))
+    assert_equal "", response["Access-Control-Expose-Headers"]
+    assert_equal "an empty header is tolerated", response.body
+  end
 end
