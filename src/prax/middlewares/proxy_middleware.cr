@@ -41,10 +41,12 @@ module Prax
       # FIXME: should dup the headers to avoid altering the request
       def proxy_headers(request, socket, ssl)
         request.headers.replace("Connection", "close")
-        request.headers.prepend("X-Forwarded-For", socket.remote_address.address)
+        # 'address.to_s' is to support Crystal versions before the issue in
+        # https://github.com/crystal-lang/crystal/pull/3872 is resolved
+        request.headers.prepend("X-Forwarded-For", socket.remote_address.address.to_s)
         request.headers.replace("X-Forwarded-Host", request.host)
         request.headers.replace("X-Forwarded-Proto", ssl ? "https" : "http")
-        request.headers.prepend("X-Forwarded-Server", socket.local_address.address)
+        request.headers.prepend("X-Forwarded-Server", socket.local_address.address.to_s)
         request.headers
       end
 
