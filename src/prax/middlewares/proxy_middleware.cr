@@ -17,15 +17,15 @@ module Prax
         Prax.logger.debug { "#{request.method} #{request.uri}" }
 
         server << "#{request.method} #{request.uri} #{request.http_version}\r\n"
-        server << proxy_headers(request, handler.tcp_socket, handler.ssl?).map(&.to_s).join("\r\n")
-        server << "\r\n\r\n"
+        proxy_headers(request, handler.tcp_socket, handler.ssl?).each(&.to_s(server))
+        server << "\r\n"
 
         if (len = request.content_length) > 0
           copy_stream(client, server, len)
         end
 
         response = Parser.new(server).parse_response
-        client << response.to_s
+        response.to_s(client)
 
         if response.header("Transfer-Encoding") == "chunked"
           stream_chunked_response(server, client)
@@ -42,7 +42,7 @@ module Prax
       def proxy_headers(request, socket, ssl)
         request.headers.replace("Connection", "close")
         request.headers.prepend("X-Forwarded-For", socket.remote_address.address)
-        request.headers.replace("X-Forwarded-Host", request.host)
+        request.headers.replace("X-Forwarded-Host", request.header("Host").try(&.value).to_s)
         request.headers.replace("X-Forwarded-Proto", ssl ? "https" : "http")
         request.headers.prepend("X-Forwarded-Server", socket.local_address.address)
         request.headers

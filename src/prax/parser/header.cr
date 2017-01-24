@@ -30,10 +30,16 @@ module Prax
         value == other
       end
 
-      def to_s
-        values.map {|value|
-          "#{name}: #{value}"
-        }.join("\r\n")
+      def to_s(io)
+        if name == "Set-Cookie"
+          values.each_with_index do |value, index|
+            io << name << ": " << value << "\r\n"
+          end
+        else
+          io << name << ": "
+          values.join(", ", io)
+          io << "\r\n"
+        end
       end
 
       def to_i

@@ -14,10 +14,10 @@ module Prax
         @headers = [] of Header
       end
 
-      def to_s
-        "#{http_version} #{code} #{status}\r\n" +
-          headers.map(&.to_s).join("\r\n") +
-          "\r\n\r\n"
+      def to_s(io)
+        io << http_version << ' ' << code << ' ' << status << "\r\n"
+        headers.each(&.to_s(io))
+        io << "\r\n"
       end
     end
   end

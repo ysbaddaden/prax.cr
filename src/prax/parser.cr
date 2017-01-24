@@ -38,12 +38,11 @@ module Prax
 
     private def parse_headers(object)
       loop do
-        break if (line = @socket.read_line.chomp).empty?
+        line = @socket.read_line.chomp
+        break if line.empty?
 
-        if match = HEADER_RE.match(line)
-          name = match[1]
-          # permit empty header values
-          value = match[2]? || ""
+        if line =~ HEADER_RE
+          name, value = $1, $2? || ""
           object.add_header(name, value)
         else
           raise InvalidRequest.new("invalid header: '#{line}'")
