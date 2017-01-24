@@ -57,8 +57,12 @@ OptionParser.parse! do |opts|
     Prax.daemonize = true
   end
 
-  opts.on("-p PORT", "--port PORT", "TCP port to bind to") do |port|
+  opts.on("-p PORT", "--port PORT", "TCP port to bind the HTTP server to") do |port|
     Prax.http_port = port.to_i
+  end
+
+  opts.on("-s", "--ssl-port PORT", "TCP port to bind the HTTPS server to") do |port|
+    Prax.https_port = port.to_i
   end
 
   opts.on("-h PATH", "--hosts PATH", "Path where hosts are linked to") do |path|

@@ -6,7 +6,12 @@ begin
   bin = File.expand_path("../../bin/prax-binary", __FILE__)
   hosts = File.expand_path("../hosts", __FILE__)
   env = { "PRAX_ROOT" => ENV["PWD"] }
-  pid = Process.spawn env, bin, "--port", "20557", "--hosts", hosts, "--verbose", out: "/dev/null", err: "/dev/null"
+  pid = Process.spawn(env, bin,
+    "--port", "20557",
+    "--ssl-port", "20556",
+    "--hosts", hosts,
+    "--verbose",
+    out: "/dev/null", err: "/dev/null")
 
   Minitest.after_run do
     Process.kill(:TERM, pid)
