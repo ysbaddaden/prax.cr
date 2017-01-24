@@ -50,9 +50,9 @@ module Prax
 
       def stream_chunked_response(server, client)
         loop do
-          break unless line = server.gets
+          break unless line = server.gets(chomp: false)
           client << line
-          count = line.strip.to_i(16)
+          count = line.to_i(16, whitespace: true)
           copy_stream(server, client, count + 2) # chunk + CRLF
           break if count == 0
         end
