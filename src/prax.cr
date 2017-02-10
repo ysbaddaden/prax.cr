@@ -86,6 +86,10 @@ OptionParser.parse! do |opts|
     exit
   end
 
+  opts.on("-t", "--timeout WAIT", "Set timeout to load app") do |wait|
+    Prax.timeout = wait.to_i
+  end
+
   opts.on("-h", "--help", "Show help") do
     puts opts
     exit
