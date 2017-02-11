@@ -134,7 +134,7 @@ module Prax
         break unless alive?
         return if connectable?
 
-        if (Time.now - timer).total_seconds > 30
+        if (Time.now - timer).total_seconds > Prax.timeout
           Prax.logger.error "timeout starting application: #{app.name}"
           kill
           break

@@ -49,6 +49,14 @@ module Prax
     @@https_port = port
   end
 
+  def self.timeout
+    @@timeout ||= ENV.fetch("PRAX_TIMEOUT", 30).to_i
+  end
+
+  def self.timeout=(wait : Int32)
+    @@timeout = wait
+  end
+
   def self.root_path
     ENV["PRAX_ROOT"]
   end
