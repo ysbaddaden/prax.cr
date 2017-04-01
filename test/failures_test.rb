@@ -21,7 +21,9 @@ class FailuresTest < Minitest::Test
 
   def test_host_header_is_missing_but_found_in_uri
     TCPSocket.open("localhost", 20557) do |socket|
-      socket.write("GET http://example.dev:20557/ HTTP/1.1\r\n\r\n")
+      # The empty query string is a workaround for the bug fixed here:
+      # https://github.com/puma/puma/pull/1259
+      socket.write("GET http://example.dev:20557/? HTTP/1.1\r\n\r\n")
       assert_equal "HTTP/1.1 200 OK\r\n", socket.gets
     end
   end
