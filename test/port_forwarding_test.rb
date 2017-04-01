@@ -6,7 +6,7 @@ class PortForwardingTest < Minitest::Test
     response = "TCPServer: OK\n"
 
     t1 = Thread.new do
-      server = TCPServer.new("localhost", 3123)
+      server = TCPServer.new("::", 3123)
       ready = true
       loop do
         begin
