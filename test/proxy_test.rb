@@ -21,6 +21,7 @@ class ProxyTest < Minitest::Test
     skip "TODO: SHELL APPLICATION"
   end
 
+  # This test may fail randomly.  You may have better success using OpenDNS.
   def test_supports_xip_io
     assert_equal "example", Net::HTTP.get(URI("http://example.127.0.0.1.xip.io:20557/"))
     assert_equal "example", Net::HTTP.get(URI("http://w1.example.127.0.0.1.xip.io:20557/"))
