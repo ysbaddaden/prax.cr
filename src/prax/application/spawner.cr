@@ -80,10 +80,10 @@ module Prax
       cmd += ["bundle", "exec"] if path.gemfile?
       cmd += ["rackup", "--host", "localhost", "--port", app.port.to_s]
 
-      env = load_env
+      warn_about_env_deprecation
 
       File.open(path.log_path, "w") do |log|
-        @process = Process.new(cmd.first, cmd[1 .. -1], env: env, output: log, error: log, chdir: path.to_s)
+        @process = Process.new(cmd.first, cmd[1 .. -1], output: log, error: log, chdir: path.to_s)
       end
 
       wait!
@@ -91,7 +91,8 @@ module Prax
 
     private def spawn_shell_application
       cmd = ["sh", path.to_s]
-      env = load_env
+      warn_about_env_deprecation
+      env = {} of String => String
       env["PORT"] = app.port.to_s
 
       File.open(path.log_path, "w") do |log|
@@ -107,22 +108,16 @@ module Prax
       end
     end
 
-    private def load_env
-      env = {} of String => String
-      return env unless @app.path.env?
+    private def warn_about_env_deprecation
+      return if ENV["PRAX_ACKNOWLEDGE_ENV_REMOVAL"]? == "true"
+      return unless @app.path.env?
 
-      Prax.logger.debug { "loading #{app.name}/.env file" }
-
-      lines = File.read_lines(@app.path.env_path)
-        .map { |line| line.gsub(/#.+/, "").strip }
-        .reject { |line| line.empty? || !line.index('=') }
-
-      lines.each do |line|
-        kv = line.split('=', 2)
-        env[kv[0]] = kv.size == 2 ? kv[1]: ""
-      end
-
-      env
+      Prax.logger.warn {
+        "Setting environment variables via '.env' has been removed.  Please " \
+        "use a '.praxrc' shell script in your project to set environment " \
+        "variables instead.  Disable this message by adding " \
+        "'export PRAX_ACKNOWLEDGE_ENV_REMOVAL=true' to your shell config file."
+      }
     end
 
     private def wait!
