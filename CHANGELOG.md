@@ -1,6 +1,6 @@
 # CHANGELOG
 
-## v0.6.2
+## UNRELEASED
 
 Fixes:
 - Improve compatibility with the Ruby dotenv gem.
