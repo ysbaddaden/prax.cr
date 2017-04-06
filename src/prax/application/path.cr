@@ -44,10 +44,6 @@ module Prax
       File.exists?(restart_path)
     end
 
-    def env?
-      File.exists?(env_path)
-    end
-
     def public_path
       path = File.join(@path, "public")
       path = @path unless File.exists?(path) && rack?
@@ -77,10 +73,6 @@ module Prax
 
     def always_restart_path
       File.join(@path, "tmp", "always_restart.txt")
-    end
-
-    def env_path
-      File.join(@path, ".env")
     end
 
     def port

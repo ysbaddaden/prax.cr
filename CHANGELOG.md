@@ -1,5 +1,14 @@
 # CHANGELOG
 
+## UNRELEASED
+
+Fixes:
+- Improve compatibility with the Ruby dotenv gem.
+
+Breaking changes:
+- Setting environment variables via `.env` files has been removed.  Please use a
+  `.praxrc` shell file in your project to set environment variables instead.
+
 ## v0.6.1
 
 Fixes:
