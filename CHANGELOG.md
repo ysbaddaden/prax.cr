@@ -1,12 +1,17 @@
 # CHANGELOG
 
-## UNRELEASED
+## v0.7.0
 
-Fixes:
-- Improve compatibility with the Ruby dotenv gem.
+Enhancements:
+- Added `--ssl-port` configuration option.
+- Added `--timeout` (`PRAX_TIMEOUT`) configuration option to wait longer or
+  shorter than 60 seconds for applications to start.
+- Detect real hardware devices to apply port redirection on (supports weird
+  systemd predictable interface names).
+- Compatibility with the dotenv gem.
 
 Breaking changes:
-- Setting environment variables via `.env` files has been removed.  Please use a
+- Setting environment variables via `.env` files has been removed. Use the
   `.praxrc` shell file in your project to set environment variables instead.
 
 ## v0.6.1
@@ -17,7 +22,8 @@ Fixes:
 ## v0.6.0
 
 Enhancements:
-- Source `.praxrc` shell files in projects (eg: to configure variables, version managers, ...)
+- Source `.praxrc` shell files in projects (eg: to configure variables, version
+  managers, ...)
 - Move iptables rules to `prax iptables` command
 - Upgraded to Crystal 0.18+
 
@@ -26,8 +32,6 @@ Fixes:
 - Unescape filenames before searching in the public folder
 
 ## v0.5.1
-
-Enhancements:
 
 Fixes:
 - Upgraded to Crystal 0.11.0 (syntax changes)
