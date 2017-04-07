@@ -5,7 +5,12 @@ set -e
 
 HTTP_PORT=20559
 HTTPS_PORT=20558
-DEVICES=$(ls /sys/class/net | egrep '^(eth|en|wl|sl|ww)')
+
+DEVICES=""
+for device in $(ls /sys/class/net); do
+    real=$(readlink /sys/class/net/$device)
+    printf %s $real | grep -q /devices/virtual/ || DEVICES="$DEVICES $device"
+done
 
 case "$1" in
   start)
