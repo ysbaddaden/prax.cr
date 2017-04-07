@@ -17,7 +17,7 @@ GEM
       clamp (~> 0.6)
       ffi
       json (>= 1.7.7)
-    json (1.8.2)
+    json (2.0.3)
     minitest (5.5.1)
     puma (2.11.0)
       rack (>= 1.1, < 2.0)
@@ -31,7 +31,8 @@ DEPENDENCIES
   fpm
   minitest
   puma
+  rack
   rake
 
 BUNDLED WITH
-   1.10.3
+   1.10.6
