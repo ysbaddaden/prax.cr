@@ -17,6 +17,7 @@ class ProxyTest < Minitest::Test
     skip "TODO: SHELL APPLICATION"
   end
 
+  # This test may fail randomly.  You may have better success using OpenDNS.
   def test_supports_xip_io
     assert_equal "example", Net::HTTP.get(URI("http://example.127.0.0.1.xip.io:20557/"))
     assert_equal "example", Net::HTTP.get(URI("http://w1.example.127.0.0.1.xip.io:20557/"))
@@ -60,7 +61,9 @@ class ProxyTest < Minitest::Test
   end
 
   def test_empty_header
-    skip "ruby won't send an empty http header value (Rack or Puma or ???)"
+    # We can stop skipping this test once this fix is released:
+    # https://github.com/puma/puma/pull/1261
+    skip "Puma won't send an empty http header value"
     response = Net::HTTP.get_response(URI("http://empty-header.dev:20557/"))
     assert_equal "", response["Access-Control-Expose-Headers"]
     assert_equal "an empty header is tolerated", response.body
