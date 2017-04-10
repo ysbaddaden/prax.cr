@@ -17,3 +17,4 @@ install: libnss_prax.so.2
 
 uninstall:
 	rm $(PREFIX)/lib/libnss_prax.so.2
+	sed -i 's/ prax//' /etc/nsswitch.conf
