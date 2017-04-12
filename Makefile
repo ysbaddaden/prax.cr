@@ -47,6 +47,7 @@ install: ext release
 	mkdir -p $(PREFIX)/etc/NetworkManager/dnsmasq.d $(PREFIX)/etc/dnsmasq.d
 	cp install/dnsmasq $(PREFIX)/etc/NetworkManager/dnsmasq.d/prax
 	cp install/dnsmasq $(PREFIX)/etc/dnsmasq.d/prax
+	cp bin/prax-rc $(PREFIX)/opt/prax/bin/prax-rc
 
 package: install
 	cd dist && fpm -s dir -t $(TARGET) \
