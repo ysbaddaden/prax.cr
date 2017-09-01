@@ -33,14 +33,20 @@ For other systems, you'll have to follow the
 
 Prax proposes 2 solutions to resolve `.dev` domains:
 
-- an NSSwitch extension, only compatible wih glibc and no longer compatible with
-  Google Chrome/Chromium;
 - a dnsmasq configuration, either throught NetworkManager or by installing
-  dnsmasq manually (eg. through your Linux distribution package).
+  dnsmasq manually (eg. through your Linux distribution package);
+- an obsolete and deprecated NSSwitch extension, only compatible wih glibc
+  and no longer compatible with Google Chrome/Chromium, and certainly more;
 
 Prax also supports http://xip.io domains, so you may use
 `myapp.129.168.0.1.xip.io` for example. This is very useful when using an
 external device like a smartphone or tablet or another computer.
+
+If your computer runs systemd, it's possible a service such as
+`systemd-networkd` or `systemd-resolved` or something else systemd took over,
+is conflicting with a local resolver. I don't have a solution —except to stay
+as far away as possible from systemd as possible.
+
 
 ### Port Redirections
 
