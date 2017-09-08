@@ -13,8 +13,8 @@ DOCDIR = $(PREFIX)/opt/prax/doc
 #GNOME_AUTOSTART = $(PREFIX)/usr/share/gnome/autostart
 VERSION = `cat ../VERSION`
 
-#DEB_DEPENDENCIES = "-d 'libpcre3' -d 'libgc1c2' -d 'libunwind8 | libunwind7'"
 DEB_DEPENDENCIES = "-d 'libssl1.0.0'"
+RPM_DEPENDENCIES = "-d 'openssl'" # pcre, xz ?
 
 SOURCES = $(wildcard src/*.cr) $(wildcard src/**/*.cr)
 
@@ -72,6 +72,14 @@ deb:
 	TARGET=deb DEPENDENCIES=$(DEB_DEPENDENCIES) INSTALL="../install/debian" make package
 	mkdir -p packages
 	mv dist/*.deb packages
+
+rpm:
+	mkdir -p $(INITD)
+	cp $(CURDIR)/install/debian/initd $(INITD)/prax
+	chmod -R 0755 $(INITD)/prax
+	TARGET=rpm DEPENDENCIES=$(RPM_DEPENDENCIES) INSTALL="../install/redhat" make package
+	mkdir -p packages
+	mv dist/*.rpm packages
 
 .PHONY: test
 test: all
