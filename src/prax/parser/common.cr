@@ -12,7 +12,7 @@ module Prax
       end
 
       def header(name)
-        headers.find { |header| header.name == name }
+        headers.find { |header| header.name.downcase == name.downcase }
       end
 
       def content_length
