@@ -23,15 +23,15 @@ For other systems, you'll have to follow the
 
 ## How it works
 
-1. resolves `*.dev` domains to 127.0.0.1 / ::1 (localhost)
+1. resolves `*.test` domains to 127.0.0.1 / ::1 (localhost)
 2. redirects the :80 and :443 ports to :20559 and :20558
-3. receives incoming HTTP requests and extracts the hostname (eg: myapp.dev)
+3. receives incoming HTTP requests and extracts the hostname (eg: myapp.test)
 4. spawns a Rack applications (found at `~/.prax/myapp`) if any
 5. proxies the request to the spawned Rack aplication or to the specified port.
 
-### `.dev` TLD
+### `.test` TLD
 
-Prax proposes 2 solutions to resolve `.dev` domains:
+Prax proposes 2 solutions to resolve `.test` domains:
 
 - a dnsmasq configuration, either throught NetworkManager or by installing
   dnsmasq manually (eg. through your Linux distribution package);

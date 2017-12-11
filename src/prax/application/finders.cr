@@ -30,7 +30,7 @@ module Prax
 
     private def self.search(host)
       if m = XIP_IO.match(host)
-        host = m[1] + ".dev"
+        host = m[1] + ".test"
       end
       names = host.split('.').tap(&.pop)
 

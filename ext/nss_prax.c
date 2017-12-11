@@ -60,7 +60,7 @@ _nss_prax_gethostbyname2_r(const char *name,
     char *env = getenv("PRAX_DOMAINS");
     char *domains;
     if (env == NULL) {
-        domains = strdup("dev");
+        domains = strdup("test");
     } else {
         domains = strdup(env);
     }

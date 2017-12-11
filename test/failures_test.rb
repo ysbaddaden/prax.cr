@@ -3,7 +3,7 @@ require_relative 'test_helper'
 class FailuresTest < Minitest::Test
   def test_rackup_config
     File.unlink log_path(:invalid) rescue nil
-    html = Net::HTTP.get(URI('http://invalid.dev:20557/'))
+    html = Net::HTTP.get(URI('http://invalid.test:20557/'))
 
     assert_match "Error starting application", html
     assert_match "crash on application boot", html
@@ -12,7 +12,7 @@ class FailuresTest < Minitest::Test
 
   def test_rackup_config_runs_nothing
     File.unlink log_path('wont-run') rescue nil
-    html = Net::HTTP.get(URI('http://wont-run.dev:20557/'))
+    html = Net::HTTP.get(URI('http://wont-run.test:20557/'))
 
     assert_match "Error starting application", html
     assert_match "missing run or map statement", html
@@ -23,7 +23,7 @@ class FailuresTest < Minitest::Test
     TCPSocket.open("localhost", 20557) do |socket|
       # The empty query string is a workaround for the bug fixed here:
       # https://github.com/puma/puma/pull/1259
-      socket.write("GET http://example.dev:20557/? HTTP/1.1\r\n\r\n")
+      socket.write("GET http://example.test:20557/? HTTP/1.1\r\n\r\n")
       assert_equal "HTTP/1.1 200 OK\r\n", socket.gets
     end
   end
