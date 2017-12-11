@@ -56,6 +56,12 @@ each `wlanX` and `ethX` devices found on your machine, to allow incoming
 traffic, so you may use xip.io to test on external devices, as mentioned above.
 
 
+### Issues
+
+In Chrome, if one types "myapp.test" into the URL bar, Chrome will issue a
+search.  Type "http://myapp.test" or "myapp.test/" instead to visit that URL.
+
+
 ## License
 
 Prax is distributed under the [CeCILL 2.1 license](http://www.cecill.info).
