@@ -61,11 +61,15 @@ class ProxyTest < Minitest::Test
   end
 
   def test_empty_header
-    # We can stop skipping this test once this fix is released:
-    # https://github.com/puma/puma/pull/1261
-    skip "Puma won't send an empty http header value"
     response = Net::HTTP.get_response(URI("http://empty-header.test:20557/"))
     assert_equal "", response["Access-Control-Expose-Headers"]
     assert_equal "an empty header is tolerated", response.body
+  end
+
+  def test_lowercase_header
+    TCPSocket.open("localhost", 20557) do |socket|
+      socket.write("GET / HTTP/1.1\r\nhost: example.dev\r\n\r\n")
+      assert_equal "HTTP/1.1 200 OK\r\n", socket.gets # a lowercase request header is tolerated
+    end
   end
 end
