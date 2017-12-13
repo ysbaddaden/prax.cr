@@ -48,6 +48,25 @@ is conflicting with a local resolver. I don't have a solution —except to stay
 as far away as possible from systemd as possible.
 
 
+### Other TLDs
+
+If `.test` domains are not your cup of tea, no problem!  Prax will route
+requests from any TLD to the applications in your `~/.prax` directory, as long
+as the domain resolves to localhost.
+
+For instance, if you wished to visit "myapp.dev" instead of "myapp.test", you
+could create dnsmasq configuration to resolve ".dev" domains to localhost, too:
+
+```
+sudo tee /etc/dnsmasq.d/dev <<EOF
+local=/dev/
+address=/dev/127.0.0.1
+address=/dev/::1
+EOF
+sudo service dnsmasq restart
+```
+
+
 ### Port Redirections
 
 The port redirections are iptables rules, that are installed and removed using
