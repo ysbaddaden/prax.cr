@@ -24,9 +24,10 @@ all: $(SOURCES)
 	mkdir -p bin
 	$(CRYSTAL_BIN) build $(CURDIR)/src/prax.cr -o bin/prax-binary
 
+# --no-debug below is a workaround for this issue: https://github.com/crystal-lang/crystal/issues/4719
 release: $(SOURCES)
 	mkdir -p $(BINDIR)
-	$(CRYSTAL_BIN) build --release $(CURDIR)/src/prax.cr -o $(BINDIR)/prax-binary
+	$(CRYSTAL_BIN) build --release $(CURDIR)/src/prax.cr -o $(BINDIR)/prax-binary --no-debug
 	#strip --strip-uneeded $(BINDIR)/prax-binary
 
 run: all
