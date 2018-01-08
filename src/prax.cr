@@ -15,7 +15,7 @@ module Prax
   class Error < Exception; end
   class BadRequest < Error; end
 
-  macro def self.version_string : String
+  def self.version_string : String
     "Prax #{VERSION} (#{BUILD_DATE})"
   end
 
