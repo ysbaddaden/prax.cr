@@ -1,7 +1,7 @@
 # NSSwitch hosts resolver plugin
 
 Allows software that rely on NSSwitch to resolve domains for Prax (like
-myapp.dev). Command line software like `host` and `dig` won't resolve the
+myapp.test). Command line software like `host` and `dig` won't resolve the
 address, but `getent` will.
 
 ## Install

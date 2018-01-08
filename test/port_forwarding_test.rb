@@ -26,7 +26,7 @@ class PortForwardingTest < Minitest::Test
       Thread.pass
     end
 
-    assert_equal response, Net::HTTP.get(URI("http://forward.dev:20557/"))
+    assert_equal response, Net::HTTP.get(URI("http://forward.test:20557/"))
     t1.join
   end
 end

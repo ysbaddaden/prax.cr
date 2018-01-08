@@ -8,9 +8,9 @@
 #
 #   $ cd ~/work/myapp
 #   $ prax open
-#   open http://myapp.dev
+#   open http://myapp.test
 #   $ prax open othername
-#   open http://othername.dev
+#   open http://othername.test
 set -e
 
 . "$PRAX_ROOT/libexec/shared.sh"
@@ -23,4 +23,4 @@ else
 fi
 
 set -x
-xdg-open "http://$name.dev"
+xdg-open "http://$name.test"

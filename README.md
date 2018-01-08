@@ -23,15 +23,15 @@ For other systems, you'll have to follow the
 
 ## How it works
 
-1. resolves `*.dev` domains to 127.0.0.1 / ::1 (localhost)
+1. resolves `*.test` domains to 127.0.0.1 / ::1 (localhost)
 2. redirects the :80 and :443 ports to :20559 and :20558
-3. receives incoming HTTP requests and extracts the hostname (eg: myapp.dev)
+3. receives incoming HTTP requests and extracts the hostname (eg: myapp.test)
 4. spawns a Rack applications (found at `~/.prax/myapp`) if any
 5. proxies the request to the spawned Rack aplication or to the specified port.
 
-### `.dev` TLD
+### `.test` TLD
 
-Prax proposes 2 solutions to resolve `.dev` domains:
+Prax proposes 2 solutions to resolve `.test` domains:
 
 - a dnsmasq configuration, either throught NetworkManager or by installing
   dnsmasq manually (eg. through your Linux distribution package);
@@ -48,12 +48,37 @@ is conflicting with a local resolver. I don't have a solution —except to stay
 as far away as possible from systemd as possible.
 
 
+### Other TLDs
+
+If `.test` domains are not your cup of tea, no problem!  Prax will route
+requests from any TLD to the applications in your `~/.prax` directory, as long
+as the domain resolves to localhost.
+
+For instance, if you wished to visit "myapp.dev" instead of "myapp.test", you
+could create dnsmasq configuration to resolve ".dev" domains to localhost, too:
+
+```
+sudo tee /etc/dnsmasq.d/dev <<EOF
+local=/dev/
+address=/dev/127.0.0.1
+address=/dev/::1
+EOF
+sudo service dnsmasq restart
+```
+
+
 ### Port Redirections
 
 The port redirections are iptables rules, that are installed and removed using
 an initd script. The script redirects the port :80 and :443 on 127.0.0.1 and for
 each `wlanX` and `ethX` devices found on your machine, to allow incoming
 traffic, so you may use xip.io to test on external devices, as mentioned above.
+
+
+### Issues
+
+In Chrome, if one types "myapp.test" into the URL bar, Chrome will issue a
+search.  Type "http://myapp.test" or "myapp.test/" instead to visit that URL.
 
 
 ## License
