@@ -14,7 +14,7 @@ DOCDIR = $(PREFIX)/opt/prax/doc
 VERSION = `cat ../VERSION`
 
 #DEB_DEPENDENCIES = "-d 'libpcre3' -d 'libgc1c2' -d 'libunwind8 | libunwind7'"
-DEB_DEPENDENCIES = "-d 'libssl1.0.0 | libssl1.1'"
+DEB_DEPENDENCIES = "-d 'libssl1.0.2 | libssl1.0.0'"
 
 SOURCES = $(wildcard src/*.cr) $(wildcard src/**/*.cr)
 
