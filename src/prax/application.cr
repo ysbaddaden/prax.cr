@@ -48,7 +48,7 @@ module Prax
       end
 
       if path.restart? && (started_at = spawner.started_at)
-        return started_at.epoch < File::Stat.new(path.restart_path).mtime.epoch
+        return started_at.epoch < File.info(path.restart_path).modification_time.epoch
       end
 
       false

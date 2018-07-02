@@ -14,12 +14,12 @@ module Prax
 
         if file?(file_path)
           Prax.logger.debug { "serving '#{file_path}'" }
-          stat = File::Stat.new(file_path)
+          info = File.info(file_path)
           type = MIME_TYPES.fetch(File.extname(file_path).downcase, DEFAULT_MIME_TYPE)
 
           headers = [] of String
           headers << "Content-Type: #{type}"
-          headers << "Content-Length: #{stat.size}"
+          headers << "Content-Length: #{info.size}"
 
           handler.reply(200, headers) do
             stream_file(handler.client, file_path)
