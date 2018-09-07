@@ -1,0 +1,10 @@
+name: prax-cr
+version: 0.8.0
+
+authors:
+  - Julien Portalier <email@example.com>
+
+description: |
+  Proxy server for development.
+
+license: CeCILL

@@ -1,5 +1,20 @@
 # CHANGELOG
 
+## v0.8.0 - 2018-09-07
+
+Enhancements:
+- Allow to port forward to specific host with `host:port` host file (and
+  `[ipv6]:port` for IPv6 addresses.
+
+Breaking changes:
+- default to `.test` TLD by default instead of Google-owned `.dev` domain that
+  requires HTTPS to be configured.
+
+Fixes:
+- HTTP headers lookups are case-insensitive.
+- Crystal 0.24+ compatibility.
+- Debian 9 packaging issues.
+
 ## v0.7.0
 
 Enhancements:
