@@ -22,8 +22,8 @@ module Prax
       # each server accepts connections in its own fiber
       servers.each_with_index do |server, index|
         spawn do
-          loop do
-            spawn handle_client(server.accept, index == 1)
+          while socket = server.accept?
+            spawn handle_client(socket, index == 1)
           end
         end
       end

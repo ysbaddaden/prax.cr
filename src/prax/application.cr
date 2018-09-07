@@ -54,16 +54,24 @@ module Prax
       false
     end
 
+    def host
+      @host ||= if path.forwarding?
+                  path.host
+                else # if path.rack? || path.shell?
+                  "127.0.0.1"
+                end
+    end
+
     def port
       @port ||= if path.rack? || path.shell?
                   find_available_port
                 elsif path.forwarding?
-                  path.port.to_i
+                  path.port
                 end
     end
 
     def connect
-      socket = TCPSocket.new("127.0.0.1", port)
+      socket = TCPSocket.new(host, port)
       yield socket
     ensure
       socket.try(&.close)

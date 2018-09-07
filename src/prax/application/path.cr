@@ -75,8 +75,34 @@ module Prax
       File.join(@path, "tmp", "always_restart.txt")
     end
 
+    def host
+      str = File.read(@path).strip
+
+      if str.starts_with?('[')
+        if bracket = str.index(']')
+          return str[1 ... bracket]
+        end
+      end
+
+      if colon = str.index(':')
+        return str[0 ... colon]
+      end
+
+      "127.0.0.1"
+    end
+
     def port
-      File.read(@path).to_i
+      str = File.read(@path).strip
+
+      if bracket = str.index(']')
+        str = str[(bracket + 1) .. -1]
+      end
+
+      if colon = str.index(':')
+        str = str[(colon + 1) .. -1]
+      end
+
+      str.to_i
     end
 
     def to_s
