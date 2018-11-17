@@ -67,7 +67,7 @@ module Prax
     end
 
     def reply(code, body = nil)
-      status = STATUSES.fetch(code)
+      status = STATUSES[code]
       body = body ? body + "\n" : ""
 
       client << "#{request.http_version} #{code} #{status}\r\n"
@@ -79,7 +79,7 @@ module Prax
     end
 
     def reply(code, headers = nil)
-      status = STATUSES.fetch(code)
+      status = STATUSES[code]
 
       headers ||= [] of String
       headers << "Connection: close"
