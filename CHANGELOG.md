@@ -1,5 +1,11 @@
 # CHANGELOG
 
+## v0.8.1 - 2018-12-08
+
+Fixes:
+- Prax hung forever when reaping child processes.
+- Crystal 0.27 compatibility.
+
 ## v0.8.0 - 2018-09-07
 
 Enhancements:

@@ -1,4 +1,4 @@
-CRYSTAL_BIN ?= $(shell which crystal)
+CRYSTAL = crystal
 
 ifndef PREFIX
 	PREFIX = $(CURDIR)/dist
@@ -18,21 +18,19 @@ DEB_DEPENDENCIES = "-d 'libssl1.0.2 | libssl1.0.0'"
 
 SOURCES = $(wildcard src/*.cr) $(wildcard src/**/*.cr)
 
-.PHONY: ext
-
 all: $(SOURCES)
 	mkdir -p bin
-	$(CRYSTAL_BIN) build $(CURDIR)/src/prax.cr -o bin/prax-binary
+	$(CRYSTAL) build $(CURDIR)/src/prax.cr -o bin/prax-binary
 
 release: $(SOURCES)
 	mkdir -p $(BINDIR)
-	$(CRYSTAL_BIN) build --release $(CURDIR)/src/prax.cr -o $(BINDIR)/prax-binary
+	$(CRYSTAL) build --release $(CURDIR)/src/prax.cr -o $(BINDIR)/prax-binary
 	#strip --strip-uneeded $(BINDIR)/prax-binary
 
 run: all
 	./bin/prax-binary
 
-ext:
+ext: .phony
 	cd ext && make
 
 install: ext release
@@ -73,11 +71,11 @@ deb:
 	mkdir -p packages
 	mv dist/*.deb packages
 
-.PHONY: test
-test: all
+test: all .phony
 	bundle exec rake test
 
-.PHONY: clean
-clean:
+clean: .phony
 	rm -rf .crystal bin/prax-binary dist test/hosts/_logs
 	cd ext && make clean
+
+.phony:
