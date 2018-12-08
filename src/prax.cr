@@ -47,9 +47,6 @@ Signal::INT.trap  { Prax.stop; exit }
 Signal::TERM.trap { Prax.stop; exit }
 Signal::QUIT.trap { Prax.stop; exit }
 
-# If a child process exits, reap it. End of story.
-Signal::CHLD.trap { LibC.waitpid(-1, out exit_code, 0) }
-
 OptionParser.parse! do |opts|
   opts.banner = "prax"
 
