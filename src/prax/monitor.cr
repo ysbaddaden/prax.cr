@@ -6,7 +6,9 @@ module Prax
     def self.clear_stalled_applications
       Prax.logger.debug "clearing stalled applications"
 
-      Prax.applications.each do |app|
+      # iterates the application array in reverse order, so deleting an
+      # application from the array won't skip an entry:
+      Prax.applications.reverse_each do |app|
         if app.last_accessed_at + TTL < Time.now
           Prax.applications.delete(app)
           app.stop
