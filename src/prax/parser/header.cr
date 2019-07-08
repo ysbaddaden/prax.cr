@@ -31,7 +31,7 @@ module Prax
       end
 
       def to_s(io)
-        if name == "Set-Cookie"
+        if name.downcase == "set-cookie"
           values.each_with_index do |value, index|
             io << name << ": " << value << "\r\n"
           end
