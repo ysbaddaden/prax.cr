@@ -20,7 +20,7 @@ mkdir -p "$ssl_path"
 case "$1" in
 "" | "generate")
     openssl genrsa -out "$ssl_path/server.key" 2048
-    openssl req -new -key "$ssl_path/server.key" -out "$ssl_path/server.csr" -subj "/C=/ST=/L=/O=Prax Dev Cert/OU=/CN=localhost"
+    openssl req -new -key "$ssl_path/server.key" -out "$ssl_path/server.csr" -subj "/O=Prax Dev Cert/CN=localhost"
     openssl x509 -req -days 365 -in "$ssl_path/server.csr" -signkey "$ssl_path/server.key" -out "$ssl_path/server.crt"
   ;;
 "clear")
