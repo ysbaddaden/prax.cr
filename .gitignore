@@ -1,9 +1,13 @@
 /bin/prax-binary
 /.crystal
 /.vagrant
+/.bundle
 /dist
 /packages
 /test/hosts/_logs
 /ssl/server.crt
 /ssl/server.csr
 /ssl/server.key
+/vendor
+/test/hosts/bundler/vendor
+/test/hosts/bundler/.bundle

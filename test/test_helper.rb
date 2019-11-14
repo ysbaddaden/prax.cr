@@ -29,10 +29,10 @@ module Minitest
     def run
       capture_exceptions do
         # DNS might have a timeout of 5 so keep this slightly higher.
-        Timeout.timeout(7) { run_without_timeout }
+        Timeout.timeout(7) { return run_without_timeout }
       end
 
-      self
+      Result.from self
     end
   end
 end
