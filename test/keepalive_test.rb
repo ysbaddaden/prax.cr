@@ -3,9 +3,9 @@
 #class KeepaliveTest < Minitest::Test
 #  def test_handles_multiple_request_on_a_single_connection
 #    TCPSocket.open("localhost", 20557) do |socket|
-#      socket.write "GET / HTTP/1.1\r\nHost: app1.example.test\r\nContent-Length: 0\r\n\r\n"
-#      socket.write "GET / HTTP/1.1\r\nHost: app2.example.test\r\nContent-Length: 0\r\n\r\n"
-#      socket.write "GET / HTTP/1.1\r\nHost: example.test\r\nContent-Length: 0\r\n\r\n"
+#      socket.write "GET / HTTP/1.1\r\nHost: app1.example.localhost\r\nContent-Length: 0\r\n\r\n"
+#      socket.write "GET / HTTP/1.1\r\nHost: app2.example.localhost\r\nContent-Length: 0\r\n\r\n"
+#      socket.write "GET / HTTP/1.1\r\nHost: example.localhost\r\nContent-Length: 0\r\n\r\n"
 #
 #      assert_equal "HTTP/1.1 200 OK\r\n", socket.gets
 #      assert_match "app1.example", read(socket)
@@ -20,7 +20,7 @@
 #
 #  def test_no_keepalive_for_connection_close
 #    TCPSocket.open("localhost", 20557) do |socket|
-#      socket.write "GET / HTTP/1.1\r\nHost: example.test\r\nContent-Length: 0\r\nConnection: close\r\n\r\n"
+#      socket.write "GET / HTTP/1.1\r\nHost: example.localhost\r\nContent-Length: 0\r\nConnection: close\r\n\r\n"
 #      socket.read # won't block for 15 seconds
 #    end
 #  end
