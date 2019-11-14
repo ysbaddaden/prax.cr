@@ -47,7 +47,7 @@ Signal::INT.trap  { Prax.stop; exit }
 Signal::TERM.trap { Prax.stop; exit }
 Signal::QUIT.trap { Prax.stop; exit }
 
-OptionParser.parse! do |opts|
+OptionParser.parse(ARGV) do |opts|
   opts.banner = "prax"
 
   opts.on("-d", "--daemon", "Daemonize the server into the background") do

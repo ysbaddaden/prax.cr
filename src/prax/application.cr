@@ -8,18 +8,17 @@ module Prax
   class Application
     getter name : String
     getter path : Path
-    getter started_at : Time?
     getter last_accessed_at : Time
     @port : Int32?
 
     def initialize(name)
       @name = name.to_s
       @path = Path.new(@name)
-      @last_accessed_at = Time.now
+      @last_accessed_at = Time.utc
     end
 
     def touch
-      @last_accessed_at = Time.now
+      @last_accessed_at = Time.utc
     end
 
     def start
@@ -91,7 +90,7 @@ module Prax
     # Sends a start, stop or restart commend to the spawner coroutine, then
     # waits for the coroutine to send a reply message.
     private def execute(command)
-      channel = Channel::Unbuffered(String).new
+      channel = Channel(String).new
       spawner.channel.send({channel, command})
 
       case message = channel.receive

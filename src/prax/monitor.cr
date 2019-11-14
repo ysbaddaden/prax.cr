@@ -9,7 +9,7 @@ module Prax
       # iterates the application array in reverse order, so deleting an
       # application from the array won't skip an entry:
       Prax.applications.reverse_each do |app|
-        if app.last_accessed_at + TTL < Time.now
+        if app.last_accessed_at + TTL < Time.utc
           Prax.applications.delete(app)
           app.stop
         end

@@ -8,7 +8,7 @@ module Prax
     getter started_at : Time?
 
     def initialize(@app)
-      @channel = Channel::Buffered(Tuple(Channel::Unbuffered(String), String)).new
+      @channel = Channel(Tuple(Channel(String), String)).new(10)
 
       ::spawn do
         loop do
@@ -62,7 +62,7 @@ module Prax
       else
       end
 
-      @started_at = Time.utc_now
+      @started_at = Time.utc
     end
 
     private def stop(restart = false)
@@ -106,7 +106,7 @@ module Prax
     end
 
     private def wait!
-      timer = Time.now
+      timer = Time.monotonic
 
       loop do
         sleep 0.1
@@ -114,7 +114,7 @@ module Prax
         break unless alive?
         return if connectable?
 
-        if (Time.now - timer).total_seconds > Prax.timeout
+        if (Time.monotonic - timer).total_seconds > Prax.timeout
           Prax.logger.error "timeout starting application: #{app.name}"
           kill
           break
