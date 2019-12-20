@@ -1,5 +1,3 @@
-require "thread"
-
 module Prax
   class Spawner
     getter app : Application
