@@ -66,8 +66,8 @@ module Prax
     private def stop(restart = false)
       return if stopped?
 
-      Prax.logger.info { "killing application: #{app.name}" } unless restart
-      kill
+      Prax.logger.info { "terminating application: #{app.name}" } unless restart
+      terminate
 
       @started_at = nil
     end
@@ -97,7 +97,7 @@ module Prax
       wait!
     end
 
-    private def kill
+    private def terminate
       if process = @process
         process.terminate
       end
@@ -114,7 +114,7 @@ module Prax
 
         if (Time.monotonic - timer).total_seconds > Prax.timeout
           Prax.logger.error { "timeout starting application: #{app.name}" }
-          kill
+          terminate
           break
         end
       end
