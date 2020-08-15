@@ -99,7 +99,7 @@ module Prax
 
     private def kill
       if process = @process
-        process.kill
+        process.terminate
       end
     end
 
