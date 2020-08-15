@@ -125,8 +125,7 @@ module Prax
 
     private def connectable?
       app.connect { true }
-    rescue ex : Errno
-      raise ex unless ex.errno == Errno::ECONNREFUSED
+    rescue ex : Socket::ConnectError
       false
     end
 
