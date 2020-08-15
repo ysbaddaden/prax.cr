@@ -104,10 +104,10 @@ class IO::FileDescriptor
 end
 
 if Prax.daemonize
-  exit if fork
+  exit if Process.fork
   LibC.setsid
 
-  exit if fork
+  exit if Process.fork
   Dir.cd "/"
 
   STDIN.reopen("/dev/null")
