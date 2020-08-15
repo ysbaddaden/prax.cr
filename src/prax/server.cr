@@ -69,8 +69,8 @@ module Prax
       #  end
       #end
 
-    rescue ex : Errno
-      case ex.errno
+    rescue ex : Socket::Error
+      case ex.os_error
       when Errno::EPIPE, Errno::ECONNRESET
       else
         debug_exception(ex)
