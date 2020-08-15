@@ -4,7 +4,7 @@ module Prax
     TTL = 9.minutes
 
     def self.clear_stalled_applications
-      Prax.logger.debug "clearing stalled applications"
+      Prax.logger.debug { "clearing stalled applications" }
 
       # iterates the application array in reverse order, so deleting an
       # application from the array won't skip an entry:
@@ -26,7 +26,7 @@ module Prax
       ::sleep DELAY
       clear_stalled_applications
     rescue ex
-      Prax.logger.error "monitor crashed: #{ex}"
+      Prax.logger.error { "monitor crashed: #{ex}" }
     end
   end
 end

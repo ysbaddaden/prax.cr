@@ -8,10 +8,10 @@ module Prax
   end
 
   def self.logger_level
-    @@logger_level ||= Logger::INFO
+    @@logger_level ||= Log::Severity::Info
   end
 
-  def self.logger_level=(level : Logger::Severity)
+  def self.logger_level=(level : Log::Severity)
     @@logger_level = level
   end
 
