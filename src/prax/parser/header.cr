@@ -37,7 +37,7 @@ module Prax
           end
         else
           io << name << ": "
-          values.join(", ", io)
+          values.join(io, ", ")
           io << "\r\n"
         end
       end

@@ -42,8 +42,8 @@ module Prax
       rescue ex : Parser::InvalidRequest
         reply 400, "Bad Request: #{ex.message}"
 
-      rescue ex : Errno
-        case ex.errno
+      rescue ex : Socket::Error
+        case ex.os_error
         when Errno::ECONNREFUSED, Errno::EPIPE, Errno::ECONNRESET
           reply 404, views.proxy_error(request.host, app.port, ex)
         else

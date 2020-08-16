@@ -11,11 +11,11 @@ module Prax
     end
 
     def run(http_port, https_port)
-      Prax.logger.info "binding to [::]:#{http_port}"
+      Prax.logger.info { "binding to [::]:#{http_port}" }
       servers << TCPServer.new("::", http_port)
 
       if ssl_configured?
-        Prax.logger.info "binding to [::]:#{https_port}"
+        Prax.logger.info { "binding to [::]:#{https_port}" }
         servers << TCPServer.new("::", https_port)
       end
 
@@ -59,7 +59,7 @@ module Prax
       #  end
 
       #  unless ios
-      #    Prax.logger.debug "closing idle connection"
+      #    Prax.logger.debug { "closing idle connection" }
       #    break
       #  end
 
@@ -69,8 +69,8 @@ module Prax
       #  end
       #end
 
-    rescue ex : Errno
-      case ex.errno
+    rescue ex : Socket::Error
+      case ex.os_error
       when Errno::EPIPE, Errno::ECONNRESET
       else
         debug_exception(ex)
@@ -88,7 +88,7 @@ module Prax
     end
 
     private def debug_exception(ex)
-      Prax.logger.error "#{ex.message}\n  #{ex.backtrace.join("\n  ")}"
+      Prax.logger.error { "#{ex.message}\n  #{ex.backtrace.join("\n  ")}" }
     end
 
     private def ssl_configured?

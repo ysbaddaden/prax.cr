@@ -52,10 +52,10 @@ module Prax
       action = restart ? "restarting" : "starting"
 
       if path.rack?
-        Prax.logger.info "#{action} rack application: #{app.name} (port #{app.port})"
+        Prax.logger.info { "#{action} rack application: #{app.name} (port #{app.port})" }
         spawn_rack_application
       elsif path.shell?
-        Prax.logger.info "#{action} shell application: #{app.name} (port #{app.port})"
+        Prax.logger.info { "#{action} shell application: #{app.name} (port #{app.port})" }
         spawn_shell_application
       else
       end
@@ -66,8 +66,8 @@ module Prax
     private def stop(restart = false)
       return if stopped?
 
-      Prax.logger.info "killing application: #{app.name}" unless restart
-      kill
+      Prax.logger.info { "terminating application: #{app.name}" } unless restart
+      terminate
 
       @started_at = nil
     end
@@ -97,9 +97,9 @@ module Prax
       wait!
     end
 
-    private def kill
+    private def terminate
       if process = @process
-        process.kill
+        process.terminate
       end
     end
 
@@ -113,20 +113,19 @@ module Prax
         return if connectable?
 
         if (Time.monotonic - timer).total_seconds > Prax.timeout
-          Prax.logger.error "timeout starting application: #{app.name}"
-          kill
+          Prax.logger.error { "timeout starting application: #{app.name}" }
+          terminate
           break
         end
       end
 
-      Prax.logger.error "error starting application: #{app.name}"
+      Prax.logger.error { "error starting application: #{app.name}" }
       raise ErrorStartingApplication.new
     end
 
     private def connectable?
       app.connect { true }
-    rescue ex : Errno
-      raise ex unless ex.errno == Errno::ECONNREFUSED
+    rescue ex : Socket::ConnectError
       false
     end
 

@@ -1,5 +1,5 @@
 require "signal"
-require "logger"
+require "log"
 require "option_parser"
 require "./env"
 require "./prax/config"
@@ -33,13 +33,10 @@ module Prax
     @@server ||= Server.new
   end
 
-  @@logger : Logger?
+  @@logger : Log?
 
   def self.logger
-    @@logger ||= Logger.new(STDOUT).tap do |logger|
-      logger.progname = "prax"
-      logger.level = logger_level
-    end
+    @@logger ||= Log.for("prax", logger_level)
   end
 end
 
@@ -71,11 +68,11 @@ OptionParser.parse(ARGV) do |opts|
   end
 
   opts.on("-V", "--verbose", "Print debug statements to output") do
-    Prax.logger_level = Logger::DEBUG
+    Prax.logger_level = Log::Severity::Debug
   end
 
   opts.on("-q", "--quiet", "Quiet down output") do
-    Prax.logger_level = Logger::WARN
+    Prax.logger_level = Log::Severity::Warn
   end
 
   opts.on("-v", "--version", "Show the version number") do
@@ -104,10 +101,10 @@ class IO::FileDescriptor
 end
 
 if Prax.daemonize
-  exit if fork
+  exit if Process.fork
   LibC.setsid
 
-  exit if fork
+  exit if Process.fork
   Dir.cd "/"
 
   STDIN.reopen("/dev/null")
