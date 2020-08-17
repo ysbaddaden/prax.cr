@@ -20,7 +20,7 @@ module Prax
   end
 
   def self.start
-    Monitor.start
+    Monitor.start unless Prax.no_monitor
     server.run(http_port, https_port)
   end
 
@@ -82,6 +82,10 @@ OptionParser.parse(ARGV) do |opts|
 
   opts.on("-t", "--timeout WAIT", "Set timeout to load app") do |wait|
     Prax.timeout = wait.to_i
+  end
+
+  opts.on("--disable-monitor", "Disable monitoring") do
+    Prax.no_monitor = true
   end
 
   opts.on("-h", "--help", "Show help") do

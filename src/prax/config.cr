@@ -57,6 +57,14 @@ module Prax
     @@timeout = wait
   end
 
+  def self.no_monitor
+    @@no_monitor ||= false
+  end
+
+  def self.no_monitor=(no_monitor : Bool)
+    @@no_monitor = no_monitor
+  end
+
   def self.root_path
     ENV["PRAX_ROOT"]
   end
