@@ -1,0 +1,11 @@
+[Unit]
+Description=Prax
+
+[Service]
+Type=simple
+ExecStart=/usr/bin/prax start
+ExecStop=/usr/bin/prax stop
+WorkingDirectory=%h
+
+[Install]
+WantedBy=default.target
