@@ -3,7 +3,7 @@ require "./application/finders"
 require "./application/spawner"
 
 module Prax
-  XIP_IO = /\A(.+)\.(?:\d+\.){4}xip\.io\Z/
+  NIP_IO = /\A(.+)\.(?:\d+\.){4}nip\.io\Z/
 
   class Application
     getter name : String
