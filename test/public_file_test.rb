@@ -3,7 +3,7 @@ require_relative "test_helper"
 class PublicFileTest < Minitest::Test
   def test_serves_files_in_public_folder
     assert_equal "my file contents\n", Net::HTTP.get(URI("http://example.localhost:20557/file.txt"))
-    assert_equal "my file contents\n", Net::HTTP.get(URI("http://example.127.0.0.1.xip.io:20557/file.txt"))
+    assert_equal "my file contents\n", Net::HTTP.get(URI("http://example.127.0.0.1.nip.io:20557/file.txt"))
   end
 
   def test_serves_files_for_non_rack_application

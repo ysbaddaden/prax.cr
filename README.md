@@ -47,9 +47,9 @@ Prax proposes 2 solutions to resolve `.test` and `.localhost` domains:
 - an obsolete and deprecated NSSwitch extension, only compatible wih glibc
   and no longer compatible with Google Chrome/Chromium, and certainly more.
 
-### xip.io
+### nip.io
 
-Prax supports http://xip.io/ domains, so you can use `myapp.129.168.0.1.xip.io`
+Prax supports http://nip.io/ domains, so you can use `myapp.129.168.0.1.nip.io`
 for example. This is useful when using an external device like a smartphone,
 tablet or another computer to test your websites on.
 
@@ -77,7 +77,7 @@ $ sudo service dnsmasq restart
 The port redirections are iptables rules, that are installed and removed using
 an initd script. The script redirects the port :80 and :443 on 127.0.0.1 and for
 each `wlanX` and `ethX` devices found on your machine, to allow incoming
-traffic, so you can use http://xip.io to test on external devices, as mentioned
+traffic, so you can use http://nip.io to test on external devices, as mentioned
 above.
 
 You can install or remove the redirections with:

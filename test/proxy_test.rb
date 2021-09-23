@@ -18,12 +18,12 @@ class ProxyTest < Minitest::Test
   end
 
   # This test may fail randomly.  You may have better success using OpenDNS.
-  def test_supports_xip_io
-    assert_equal "example", Net::HTTP.get(URI("http://example.127.0.0.1.xip.io:20557/"))
-    assert_equal "example", Net::HTTP.get(URI("http://w1.example.127.0.0.1.xip.io:20557/"))
+  def test_supports_nip_io
+    assert_equal "example", Net::HTTP.get(URI("http://example.127.0.0.1.nip.io:20557/"))
+    assert_equal "example", Net::HTTP.get(URI("http://w1.example.127.0.0.1.nip.io:20557/"))
 
-    assert_equal "app1.example", Net::HTTP.get(URI("http://app1.example.127.0.0.1.xip.io:20557/"))
-    assert_equal "app2.example", Net::HTTP.get(URI("http://w3.app2.example.127.0.0.1.xip.io:20557/"))
+    assert_equal "app1.example", Net::HTTP.get(URI("http://app1.example.127.0.0.1.nip.io:20557/"))
+    :ssert_equal "app2.example", Net::HTTP.get(URI("http://w3.app2.example.127.0.0.1.nip.io:20557/"))
   end
 
   def test_returns_multiple_set_cookie_headers
